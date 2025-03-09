@@ -1,0 +1,81 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+servers: 1
+agents: 2
+kubeAPI:
+  host: ${CLUSTER_HOSTNAME}
+  hostIP: "127.0.0.1"
+  hostPort: "6443"
+image: rancher/k3s:${K3S_VERSION}
+subnet: "172.28.0.0/16"
+volumes:
+  - volume: ${HOME}:${HOME}
+    nodeFilters:
+      - server:*
+      - agent:*
+ports:
+  - port: 127.0.0.1:80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 127.0.0.1:443:443
+    nodeFilters:
+      - loadbalancer
+files:
+  - description: 'Traefik customization'
+    source: bootstrap/traefik-config.yaml
+    destination: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+    nodeFilters:
+      - server:*
+  - description: 'Cert Manager'
+    source: bootstrap/cert-manager.yaml
+    destination: /var/lib/rancher/k3s/server/manifests/cert-manager.yaml
+    nodeFilters:
+      - server:*
+  - description: 'Self signed CA'
+    source: bootstrap/cert-issuer.yaml
+    destination: /var/lib/rancher/k3s/server/manifests/certificate-management.yaml
+    nodeFilters:
+      - server:*
+  - description: 'CoreDNS customization'
+    source: bootstrap/coredns-custom.yaml
+    destination: /var/lib/rancher/k3s/server/manifests/coredns-custom.yaml
+    nodeFilters:
+      - server:*
+registries:
+  create:
+    name: registry.${CLUSTER_HOSTNAME}
+    volumes:
+      - ${PROJECT_ROOT}/.registry/:/var/lib/registry
+    host: "127.0.0.1"
+    hostPort: "${REGISTRY_PORT}"
+  config: |
+    mirrors:
+      "docker.io":
+        endpoint:
+          - http://registry.${CLUSTER_HOSTNAME}:${REGISTRY_PORT}
+      "registry.k8s.io":
+        endpoint:
+          - http://registry.${CLUSTER_HOSTNAME}:${REGISTRY_PORT}
+      "ghcr.io":
+        endpoint:
+          - http://registry.${CLUSTER_HOSTNAME}:${REGISTRY_PORT}
+      "quay.io":
+        endpoint:
+          - http://registry.${CLUSTER_HOSTNAME}:${REGISTRY_PORT}
+      "gcr.io":
+        endpoint:
+          - http://registry.${CLUSTER_HOSTNAME}:${REGISTRY_PORT}
+options:
+  k3d:
+    wait: true
+    timeout: "60s"
+    disableLoadbalancer: false
+    disableImageVolume: false
+    disableRollback: false
+    loadbalancer:
+      configOverrides:
+        - settings.workerConnections=2048
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
