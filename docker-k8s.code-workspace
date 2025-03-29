@@ -1,0 +1,13 @@
+{
+    "settings": {
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "editor.renderLineHighlight": "all",
+        "editor.quickSuggestions": {
+            "other": "on"
+        },
+        "[yaml]": {
+            "editor.guides.indentation": true
+        }
+    }
+}
