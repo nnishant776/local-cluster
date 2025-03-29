@@ -25,3 +25,12 @@ releases:
     values:
       - grafana/values.yaml.gotmpl
       - {{- toYaml .Values.global | nindent 8 }}
+
+  - name: loki
+    namespace: monitoring
+    chart: grafana/loki
+    createNamespace: true
+    installed: true
+    values:
+      - loki/values.yaml.gotmpl
+      - {{- toYaml .Values.global | nindent 8 }}
