@@ -33,16 +33,6 @@ files:
     destination: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
     nodeFilters:
       - server:*
-  - description: 'Cert Manager'
-    source: bootstrap/cert-manager.yaml
-    destination: /var/lib/rancher/k3s/server/manifests/cert-manager.yaml
-    nodeFilters:
-      - server:*
-  - description: 'Self signed CA'
-    source: bootstrap/cert-issuer.yaml
-    destination: /var/lib/rancher/k3s/server/manifests/certificate-management.yaml
-    nodeFilters:
-      - server:*
   - description: 'CoreDNS customization'
     source: bootstrap/coredns-custom.yaml
     destination: /var/lib/rancher/k3s/server/manifests/coredns-custom.yaml
