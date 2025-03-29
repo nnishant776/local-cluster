@@ -1,0 +1,7 @@
+caConfig:
+  useSelfSigned: true
+  secretName: ""
+bundleConfig:
+  configMap:
+    name: ""
+    key: ""

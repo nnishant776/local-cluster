@@ -1,0 +1,21 @@
+environments:
+  default:
+    values:
+      - values.yaml
+---
+helmDefaults:
+  args: []
+  diffArgs:
+    - "--suppress-secrets"
+  wait: true
+  timeout: 1800
+  waitForJobs: true
+  deleteWait: true
+  deleteTimeout: 300
+  recreatePods: true
+
+helmfiles:
+  - path: tls-management/helmfile.yaml
+    values:
+      - {{- toYaml .Values | nindent 8 }}
+      - env.yaml.gotmpl

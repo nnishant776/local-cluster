@@ -1,0 +1,8 @@
+global:
+  caConfig:
+    useSelfSigned: true
+    secretName: custom-ca-certs
+  bundleConfig:
+    configMap:
+      name: trusted-ca-certs
+      key: cert.pem
