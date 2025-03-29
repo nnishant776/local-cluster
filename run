@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+PROJROOT=$(dirname $(realpath $BASH_SOURCE[0]))
+docker run \
+    --rm \
+    --env-file .env \
+    --network host \
+    --security-opt seccomp=unconfined \
+    --security-opt label=disable \
+    -v $PROJROOT:$PROJROOT:ro \
+    -v $HOME:$HOME:ro \
+    -v $HOME/.kube/config:/root/.kube/config:ro \
+    -it \
+    -w $PROJROOT \
+    ghcr.io/helmfile/helmfile:v0.171.0 $@
