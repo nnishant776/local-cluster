@@ -1,0 +1,90 @@
+rbac:
+  create: true
+  pspEnabled: false
+  pspUseAppArmor: false
+  namespaced: false
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+dnsConfig:
+  nameservers:
+    - 10.43.0.10
+    - 8.8.8.8
+  options:
+    - name: ndots
+      value: "2"
+replicas: 1
+headlessService: false
+automountServiceAccountToken: true
+autoscaling:
+  enabled: false
+deploymentStrategy:
+  type: RollingUpdate
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 60
+  timeoutSeconds: 30
+  failureThreshold: 10
+testFramework:
+  enabled: false
+extraConfigmapMounts:
+  - name: trusted-ca
+    mountPath: /etc/grafana/ssl/
+    configMap: {{ .Values.global.bundleConfig.configMap.name }}
+    readOnly: true
+    optional: false
+createConfigmap: true
+podPortName: grafana
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+  portName: service
+serviceMonitor:
+  enabled: false
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: tls-cert-issuer
+  labels:
+    app.kubernetes.io/name: grafana
+  path: /
+  pathType: Prefix
+  hosts:
+    - monitoring.{{ .Values.global.cluster.hostname }}
+  tls:
+  - secretName: monitoring-cert
+    hosts:
+      - monitoring.{{ .Values.global.cluster.hostname }}
+persistence:
+  enabled: false
+initChownData:
+  enabled: false
+adminUser: {{ .Values.secrets.grafana.username }}
+adminPassword: {{ .Values.secrets.grafana.password }}
+grafana.ini:
+  paths:
+    data: /var/lib/grafana/
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  analytics:
+    check_for_updates: true
+  log:
+    mode: console
+  grafana_net:
+    url: https://grafana.net
+  server:
+    domain: "monitoring.{{ .Values.global.cluster.hostname }}"
+ldap:
+  enabled: false
+assertNoLeakedSecrets: true

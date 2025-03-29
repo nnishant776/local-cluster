@@ -2,6 +2,7 @@ environments:
   default:
     values:
       - values.yaml
+      - secrets.yaml
 ---
 helmDefaults:
   args: []
@@ -16,6 +17,11 @@ helmDefaults:
 
 helmfiles:
   - path: tls-management/helmfile.yaml
+    values:
+      - {{- toYaml .Values | nindent 8 }}
+      - env.yaml.gotmpl
+
+  - path: monitoring/helmfile.yaml
     values:
       - {{- toYaml .Values | nindent 8 }}
       - env.yaml.gotmpl

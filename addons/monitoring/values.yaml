@@ -1,0 +1,8 @@
+global:
+  hostAliases:
+    - ip: "34.120.177.193"
+      hostnames:
+        - "grafana.com"
+    - ip: "35.241.23.245"
+      hostnames:
+        - "grafana.net"
