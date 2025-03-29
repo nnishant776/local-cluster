@@ -34,3 +34,12 @@ releases:
     values:
       - loki/values.yaml.gotmpl
       - {{- toYaml .Values.global | nindent 8 }}
+
+  - name: alloy
+    namespace: monitoring
+    chart: grafana/alloy
+    createNamespace: true
+    installed: true
+    values:
+      - alloy/values.yaml.gotmpl
+      - {{- toYaml .Values.global | nindent 8 }}
