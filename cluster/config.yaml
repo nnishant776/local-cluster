@@ -16,6 +16,10 @@ volumes:
     nodeFilters:
       - server:*
       - agent:*
+  - volume: ${DATA_PATH_SRC}:${DATA_PATH_DEST}   # Make sure the source directory exists
+    nodeFilters:
+      - server:*
+      - agent:*
 ports:
   - port: 127.0.0.1:80:80
     nodeFilters:

@@ -3,6 +3,8 @@ export cluster_name:=docker-k3s
 export cluster_hostname:=local.cluster.dev
 export registry_port:=5000
 export k3s_version:=v1.30.6-k3s1
+export data_path_src:=/mnt/$(cluster_name)
+export data_path_dest:=/mnt
 
 .env:
 	echo "PROJECT_ROOT=$(projroot)" >> .env
@@ -10,6 +12,8 @@ export k3s_version:=v1.30.6-k3s1
 	echo "CLUSTER_NAME=$(cluster_name)" >> .env
 	echo "REGISTRY_PORT=$(registry_port)" >> .env
 	echo "K3S_VERSION=$(k3s_version)" >> .env
+	echo "DATA_PATH_SRC=$(data_path_src)" >> .env
+	echo "DATA_PATH_DEST=$(data_path_dest)" >> .env
 
 setup: .env
 
