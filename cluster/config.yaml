@@ -3,6 +3,8 @@ apiVersion: k3d.io/v1alpha5
 kind: Simple
 servers: 1
 agents: 2
+metadata:
+  name: ${CLUSTER_NAME}
 kubeAPI:
   host: ${CLUSTER_HOSTNAME}
   hostIP: "127.0.0.1"
