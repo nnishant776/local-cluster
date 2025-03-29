@@ -1,0 +1,4 @@
+- [ ] Fix CoreDNS deployment customization
+- [ ] Add support for pre-generated root CA keys
+- [ ] Resolve `too many files open` error
+- [ ] Resolve alloy error `failed to flush chunks` and `read-only file system`
