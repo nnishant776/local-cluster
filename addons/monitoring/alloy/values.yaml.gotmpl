@@ -4,12 +4,6 @@ alloy:
       loki.write "default" {
         endpoint {
           url = "http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local/loki/api/v1/push"
-
-          // Get basic authentication based on environment variables.
-          basic_auth {
-            username = {{ .Values.secrets.grafana.username | quote }}
-            password = {{ .Values.secrets.grafana.password | quote }}
-          }
         }
       }
       // Write your Alloy config here:
@@ -100,9 +94,6 @@ alloy:
           values = {
             cluster = {{ .Values.global.cluster.name | quote }},
           }
-        }
-        stage.tenant {
-          value = {{ .Values.global.tenant.name | quote }}
         }
         forward_to = [loki.write.default.receiver]
       }
