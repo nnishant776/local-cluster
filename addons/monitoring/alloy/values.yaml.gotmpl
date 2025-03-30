@@ -70,15 +70,6 @@ alloy:
           separator = "/"
           replacement = "/var/log/pods/*$1/*.log"
         }
-
-        // Label creation -  "container_runtime" field from "__meta_kubernetes_pod_container_id"
-        rule {
-          source_labels = ["__meta_kubernetes_pod_container_id"]
-          action = "replace"
-          target_label = "container_runtime"
-          regex = "^(\\S+):\\/\\/.+$"
-          replacement = "$1"
-        }
       }
 
       // loki.source.kubernetes tails logs from Kubernetes containers using the Kubernetes API.
