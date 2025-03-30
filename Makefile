@@ -75,3 +75,9 @@ else ifeq ($(action), debug)
 else
 	echo "Unknown action. Exiting"
 endif
+
+cert: type:=
+cert:
+ifeq ($(type), CA)
+	export $$(cat .env); . ./certgen; genCA;
+endif
