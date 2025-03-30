@@ -83,5 +83,5 @@ endif
 cert: type:=
 cert:
 ifeq ($(type), CA)
-	export $$(cat .env); . ./certgen; genCA;
+	export $$(cat .env); . ./lib.sh; genCA;
 endif

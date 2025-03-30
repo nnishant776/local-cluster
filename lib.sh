@@ -1,6 +1,18 @@
-#!/usr/bin/env bash
+osType() {
+    echo "$(echo $(uname) | tr '[[:upper:]]' '[[:lower:]]')"
+}
 
-set -e -u -o pipefail
+cpuArch() {
+    arch=$(uname -m)
+    case $arch in
+        "x86_64" )
+            echo ${arch/x86_/amd}
+            ;;
+        * )
+            echo $arch
+            ;;
+    esac
+}
 
 genCA() {
     openssl genrsa -out ca.key 2048
