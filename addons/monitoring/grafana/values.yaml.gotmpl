@@ -33,12 +33,6 @@ livenessProbe:
   failureThreshold: 10
 testFramework:
   enabled: false
-extraConfigmapMounts:
-  - name: trusted-ca
-    mountPath: /etc/grafana/ssl/
-    configMap: {{ .Values.global.bundleConfig.configMap.name }}
-    readOnly: true
-    optional: false
 createConfigmap: true
 podPortName: grafana
 service:

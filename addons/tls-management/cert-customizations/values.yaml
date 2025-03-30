@@ -1,7 +1,8 @@
-caConfig:
-  useSelfSigned: true
-  secretName: ""
-bundleConfig:
-  configMap:
-    name: ""
-    key: ""
+tls:
+  ca:
+    selfSigned: false
+    secretName: ""
+  cert:
+    configMap:
+      name: ""
+      key: ""
