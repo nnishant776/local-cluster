@@ -2,6 +2,7 @@ export projroot:=$(shell realpath .)
 export cluster_name:=docker-k3s
 export cluster_hostname:=local.cluster.dev
 export registry_port:=5000
+export k3d_version:=v5.8.3
 export k3s_version:=v1.30.6-k3s1
 export data_path_src:=/mnt/$(cluster_name)
 export data_path_dest:=/mnt
@@ -16,6 +17,9 @@ export data_path_dest:=/mnt
 	echo "DATA_PATH_DEST=$(data_path_dest)" >> .env
 
 setup: .env
+	if ! command -v k3d; then \
+		curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=$(k3d_version) bash; \
+	fi
 
 cluster: action:=
 cluster: setup
