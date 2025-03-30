@@ -3,7 +3,9 @@ export cluster_name:=docker-k3s
 export cluster_hostname:=local.cluster.dev
 export registry_port:=5000
 export k3d_version:=v5.8.3
+export kubectl_version:=v1.32.3
 export k3s_version:=v1.30.6-k3s1
+export k9s_version:=v0.40.10
 export data_path_src:=/mnt/$(cluster_name)
 export data_path_dest:=/mnt
 
@@ -18,8 +20,17 @@ export data_path_dest:=/mnt
 
 setup: .env
 	if ! command -v k3d; then \
-		curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=$(k3d_version) bash; \
+		curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=$(k3d_version) bash ; \
 	fi
+	if ! command -v kubectl; then \
+		. ./lib.sh; curl -fSLGO "https://dl.k8s.io/release/$(kubectl_version)/bin/linux/$$(cpuArch)/kubectl" ; \
+		chmod 0755 kubectl; sudo mv kubectl /usr/local/bin ; \
+	fi
+	if ! command -v k9s; then \
+		. ./lib.sh; curl -fSLGO https://github.com/derailed/k9s/releases/download/$(k9s_version)/k9s_$$(uname)_$$(cpuArch).tar.gz ; \
+		tar -xf k9s_$$(uname)_$$(cpuArch).tar.gz; chmod 0755 k9s; sudo mv k9s /usr/local/bin; rm k9s_$$(uname)_$$(cpuArch).tar.gz ; \
+	fi
+
 
 cluster: action:=
 cluster: setup
