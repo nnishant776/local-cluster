@@ -21,7 +21,9 @@ releases:
   - name: grafana
     namespace: monitoring
     chart: grafana/grafana
+    version: 8.10.4
     createNamespace: true
+    installed: true
     values:
       - grafana/values.yaml.gotmpl
       - {{- toYaml .Values.global | nindent 8 }}
@@ -29,6 +31,7 @@ releases:
   - name: loki
     namespace: monitoring
     chart: grafana/loki
+    version: 6.29.0
     createNamespace: true
     installed: true
     values:
@@ -38,6 +41,7 @@ releases:
   - name: alloy
     namespace: monitoring
     chart: grafana/alloy
+    version: 0.12.5
     createNamespace: true
     installed: true
     values:
