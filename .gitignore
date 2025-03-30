@@ -1,0 +1,5 @@
+/.registry
+/out.log
+/.env
+*.crt
+*.key
