@@ -2,6 +2,7 @@ environments:
   default:
     values:
       - values.yaml
+      - {{- toYaml .Values | nindent 8 }}
 ---
 helmDefaults:
   args: []
@@ -26,7 +27,6 @@ releases:
     installed: true
     values:
       - grafana/values.yaml.gotmpl
-      - {{- toYaml .Values.global | nindent 8 }}
 
   - name: loki
     namespace: monitoring
@@ -36,7 +36,6 @@ releases:
     installed: true
     values:
       - loki/values.yaml.gotmpl
-      - {{- toYaml .Values.global | nindent 8 }}
 
   - name: alloy
     namespace: monitoring
@@ -46,4 +45,3 @@ releases:
     installed: true
     values:
       - alloy/values.yaml.gotmpl
-      - {{- toYaml .Values.global | nindent 8 }}

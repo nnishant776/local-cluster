@@ -3,6 +3,7 @@ global:
     ca:
       selfSigned: false
       secretName: private-root-ca
+      issuerName: tls-cert-issuer
     cert:
       configMap:
         name: trusted-ca-certs

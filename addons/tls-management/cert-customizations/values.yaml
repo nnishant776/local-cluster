@@ -1,8 +1,0 @@
-tls:
-  ca:
-    selfSigned: false
-    secretName: ""
-  cert:
-    configMap:
-      name: ""
-      key: ""

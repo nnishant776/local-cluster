@@ -15,6 +15,7 @@ repositories:
 releases:
   - name: cert-manager
     namespace: cert-manager
+    installed: true
     chart: jetstack/cert-manager
     version: v1.17.1
     createNamespace: true
@@ -23,6 +24,7 @@ releases:
 
   - name: trust-manager
     namespace: cert-manager
+    installed: true
     chart: jetstack/trust-manager
     version: 0.16.0
     createNamespace: true
@@ -33,8 +35,10 @@ releases:
 
   - name: cert-customizations
     namespace: cert-manager
+    installed: true
     chart: cert-customizations
+    createNamespace: true
     needs:
       - cert-manager/trust-manager
     values:
-      - {{- toYaml .Values.global | nindent 8 }}
+      - {{- toYaml .Values | nindent 8 }}

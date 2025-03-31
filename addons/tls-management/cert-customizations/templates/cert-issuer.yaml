@@ -1,4 +1,4 @@
-{{- if (tpl .Values.tls.ca.selfSigned .) }}
+{{- if .Values.global.tls.ca.selfSigned }}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -15,7 +15,7 @@ metadata:
 spec:
   isCA: true
   commonName: local.dev
-  secretName: {{ tpl .Values.tls.ca.secretName . }}
+  secretName: {{ .Values.global.tls.ca.secretName }}
   privateKey:
     algorithm: ECDSA
     size: 256
@@ -28,7 +28,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: {{ tpl .Values.tls.ca.issuerName . }}
+  name: {{ .Values.global.tls.ca.issuerName }}
 spec:
   ca:
-    secretName: {{ tpl .Values.tls.ca.secretName . }}
+    secretName: {{ .Values.global.tls.ca.secretName }}
