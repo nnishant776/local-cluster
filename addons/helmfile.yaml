@@ -13,7 +13,6 @@ helmDefaults:
   waitForJobs: true
   deleteWait: true
   deleteTimeout: 300
-  recreatePods: true
 
 helmfiles:
   - path: tls-management/helmfile.yaml

@@ -7,7 +7,6 @@ helmDefaults:
   waitForJobs: true
   deleteWait: true
   deleteTimeout: 300
-  recreatePods: true
 
 repositories:
   - name: jetstack
