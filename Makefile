@@ -54,11 +54,11 @@ ifeq ($(action), install)
 		--security-opt label=disable \
 		-v $(projroot):$(projroot):ro \
 		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/root/.kube/config:ro \
+		-v $$HOME/.kube/config:/helm/.kube/config:ro \
 		-it \
 		-w $(projroot) \
 		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile --kubeconfig $$HOME/.kube/config sync -f $(projroot)/addons/helmfile.yaml
+		helmfile sync -f $(projroot)/addons/helmfile.yaml
 else ifeq ($(action), uninstall)
 	docker run \
 		--rm \
@@ -68,11 +68,11 @@ else ifeq ($(action), uninstall)
 		--security-opt label=disable \
 		-v $(projroot):$(projroot):ro \
 		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/root/.kube/config:ro \
+		-v $$HOME/.kube/config:/helm/.kube/config:ro \
 		-it \
 		-w $(projroot) \
 		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile --kubeconfig $$HOME/.kube/config destroy -f $(projroot)/addons/helmfile.yaml
+		helmfile destroy -f $(projroot)/addons/helmfile.yaml
 else ifeq ($(action), debug)
 	docker run \
 		--rm \
@@ -82,11 +82,11 @@ else ifeq ($(action), debug)
 		--security-opt label=disable \
 		-v $(projroot):$(projroot):ro \
 		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/root/.kube/config:ro \
+		-v $$HOME/.kube/config:/helm/.kube/config:ro \
 		-it \
 		-w $(projroot) \
 		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile --kubeconfig $$HOME/.kube/config template -f $(projroot)/addons/helmfile.yaml --debug
+		helmfile template -f $(projroot)/addons/helmfile.yaml --debug
 else
 	echo "Unknown action. Exiting"
 endif
