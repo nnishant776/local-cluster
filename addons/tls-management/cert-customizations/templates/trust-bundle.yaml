@@ -2,13 +2,13 @@
 apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
-  name: {{ .Values.tls.cert.configMap.name }}
+  name: {{ tpl .Values.tls.cert.configMap.name . }}
 spec:
   sources:
   - useDefaultCAs: true
   - secret:
-      name: {{ .Values.tls.ca.secretName }}
+      name: {{ tpl .Values.tls.ca.secretName . }}
       key: tls.crt
   target:
     configMap:
-      key: {{ .Values.tls.cert.configMap.key }}
+      key: {{ tpl .Values.tls.cert.configMap.key . }}

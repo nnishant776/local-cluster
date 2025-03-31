@@ -48,23 +48,23 @@ ingress:
   ingressClassName: traefik
   annotations:
     kubernetes.io/ingress.class: traefik
-    cert-manager.io/cluster-issuer: tls-cert-issuer
+    cert-manager.io/cluster-issuer: {{ tpl .Values.global.tls.ca.issuerName . }}
   labels:
     app.kubernetes.io/name: grafana
   path: /
   pathType: Prefix
   hosts:
-    - monitoring.{{ .Values.global.cluster.hostname }}
+    - monitoring.{{ tpl .Values.global.cluster.hostname . }}
   tls:
   - secretName: monitoring-cert
     hosts:
-      - monitoring.{{ .Values.global.cluster.hostname }}
+      - monitoring.{{ tpl .Values.global.cluster.hostname . }}
 persistence:
   enabled: false
 initChownData:
   enabled: false
-adminUser: {{ .Values.secrets.grafana.username }}
-adminPassword: {{ .Values.secrets.grafana.password }}
+adminUser: {{ tpl .Values.secrets.grafana.username . }}
+adminPassword: {{ tpl .Values.secrets.grafana.password . }}
 grafana.ini:
   paths:
     data: /var/lib/grafana/
@@ -78,7 +78,7 @@ grafana.ini:
   grafana_net:
     url: https://grafana.net
   server:
-    domain: "monitoring.{{ .Values.global.cluster.hostname }}"
+    domain: "monitoring.{{ tpl .Values.global.cluster.hostname . }}"
 ldap:
   enabled: false
 assertNoLeakedSecrets: true

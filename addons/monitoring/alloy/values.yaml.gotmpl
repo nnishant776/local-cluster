@@ -83,7 +83,7 @@ alloy:
       loki.process "pod_logs" {
         stage.static_labels {
           values = {
-            cluster = {{ .Values.global.cluster.name | quote }},
+            cluster = {{ tpl .Values.global.cluster.name . | quote }},
           }
         }
         forward_to = [loki.write.default.receiver]
