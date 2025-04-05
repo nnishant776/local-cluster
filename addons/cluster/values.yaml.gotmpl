@@ -1,0 +1,28 @@
+global: {{ .Values.global | toYaml | nindent 2 }}
+dnsserver:
+  {{ get "dnsserver" .Values | toYaml | nindent 2 }}
+  extraZones:
+    - rootDomain: {{ .Values.global.cluster.hostname }}
+      ttl: 5m
+      soa:
+        rootNameserver: ns.{{ .Values.global.cluster.hostname }}
+        maintainer: admin.{{ .Values.global.cluster.hostname }}
+        serial: 2020010510
+        peerIntervals:
+          refresh: 1d
+          retry: 2h
+          expiration: 4w
+        cacheExpiration: 1h
+      records:
+        - name: "@"
+          entries:
+            - { "class": "IN", "type": "NS", "value": "ns.{{ .Values.global.cluster.hostname }}" }
+            - { "class": "IN", "type": "A", "value": "172.28.0.2" }
+            - { "class": "IN", "type": "A", "value": "172.28.0.3" }
+            - { "class": "IN", "type": "A", "value": "172.28.0.4" }
+        - name: "ns"
+          entries:
+            - { "class": "IN", "type": "CNAME", "value": "@" }
+        - name: "monitoring"
+          entries:
+            - { "class": "IN", "type": "CNAME", "value": "@" }

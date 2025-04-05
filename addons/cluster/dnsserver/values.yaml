@@ -1,0 +1,73 @@
+zones: []
+
+coredns:
+  autoscaler:
+    enabled: false
+  deployment:
+    enabled: true
+  extraConfig:
+    import:
+      parameters: /etc/coredns/custom/*.server
+  extraVolumeMounts:
+    - name: dnsserver-config
+      mountPath: /etc/coredns/custom
+  extraVolumes:
+    - name: dnsserver-config
+      configMap:
+        name: dnsserver-config
+  hpa:
+    enabled: false
+  isClusterService: false
+  livenessProbe:
+    enabled: true
+  prometheus:
+    monitor:
+      enabled: false
+    service:
+      enabled: false
+  rbac:
+    create: false
+  readinessProbe:
+    enabled: true
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 1
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      add:
+      - NET_BIND_SERVICE
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+  servers:
+  - plugins:
+    - name: errors
+    - configBlock: lameduck 10s
+      name: health
+    - name: ready
+    - name: forward
+      parameters: . /etc/resolv.conf
+    - name: cache
+      parameters: 30
+    - name: loop
+    - name: reload
+    - name: loadbalance
+    - name: import
+      parameters: /etc/coredns/custom/Corefile.override
+    port: 53
+    zones:
+    - zone: .
+  serviceAccount:
+    create: false
+  serviceType: LoadBalancer
+  terminationGracePeriodSeconds: 30
+  zoneFiles: []
