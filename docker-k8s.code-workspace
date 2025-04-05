@@ -8,6 +8,9 @@
         },
         "[yaml]": {
             "editor.guides.indentation": true
+        },
+        "[gotmpl]": {
+            "editor.guides.indentation": true
         }
     }
 }

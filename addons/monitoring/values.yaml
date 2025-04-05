@@ -1,8 +1,16 @@
 global:
-  hostAliases:
-    - ip: "34.120.177.193"
-      hostnames:
-        - "grafana.com"
-    - ip: "35.241.23.245"
-      hostnames:
-        - "grafana.net"
+  dns:
+    config:
+      nameservers:
+        - 10.43.0.10
+        - 8.8.8.8
+      options:
+        - name: ndots
+          value: "2"
+    hosts:
+      - ip: "34.120.177.193"
+        hostnames:
+          - "grafana.com"
+      - ip: "35.241.23.245"
+        hostnames:
+          - "grafana.net"

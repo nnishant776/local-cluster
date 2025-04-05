@@ -14,13 +14,18 @@ helmDefaults:
   deleteWait: true
   deleteTimeout: 300
 
+values:
+  - env.yaml.gotmpl
+
 helmfiles:
   - path: tls-management/helmfile.yaml
     values:
       - {{- toYaml .Values | nindent 8 }}
-      - env.yaml.gotmpl
 
   - path: monitoring/helmfile.yaml
     values:
       - {{- toYaml .Values | nindent 8 }}
-      - env.yaml.gotmpl
+
+  - path: cluster/helmfile.yaml
+    values:
+      - {{- toYaml .Values | nindent 8 }}

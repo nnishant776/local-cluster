@@ -6,13 +6,8 @@ rbac:
 serviceAccount:
   create: true
   automountServiceAccountToken: true
-dnsConfig:
-  nameservers:
-    - 10.43.0.10
-    - 8.8.8.8
-  options:
-    - name: ndots
-      value: "2"
+dnsConfig: {{ .Values.global.dns.config | toYaml | nindent 2 }}
+hostAliases: {{ .Values.global.dns.hosts | toYaml | nindent 2 }}
 replicas: 1
 headlessService: false
 automountServiceAccountToken: true

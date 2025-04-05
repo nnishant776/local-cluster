@@ -6,9 +6,11 @@ docker run \
     --network host \
     --security-opt seccomp=unconfined \
     --security-opt label=disable \
-    -v $PROJROOT:$PROJROOT:ro \
+    -v $PROJROOT:$PROJROOT \
     -v $HOME:$HOME:ro \
-    -v $HOME/.kube/config:/root/.kube/config:ro \
+    -v $HOME/.cache/helm:/helm/.cache/helm \
+    -v $HOME/.config/helm:/helm/.config/helm \
+    -v $HOME/.kube/config:/helm/.kube/config:ro \
     -it \
     -w $PROJROOT \
     ghcr.io/helmfile/helmfile:v0.171.0 $@
