@@ -1,0 +1,62 @@
+ingress-nginx:
+  controller:
+    ingressClassResource:
+      name: nginx
+      enabled: true
+      default: true
+    ingressClass: nginx
+    publishService:
+      enabled: true
+    scope:
+      enabled: false
+    # -- Use a `DaemonSet` or `Deployment`
+    kind: Deployment
+    updateStrategy:
+      rollingUpdate:
+        maxUnavailable: 1
+      type: RollingUpdate
+    terminationGracePeriodSeconds: 60
+    livenessProbe:
+      httpGet:
+        path: "/healthz"
+        port: 10254
+        scheme: HTTP
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 5
+    readinessProbe:
+      httpGet:
+        path: "/healthz"
+        port: 10254
+        scheme: HTTP
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+    healthCheckPath: "/healthz"
+    replicaCount: 1
+    minAvailable: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 90Mi
+    autoscaling:
+      enabled: false
+    enableMimalloc: true
+    shareProcessNamespace: false
+    metrics:
+      enabled: false
+  revisionHistoryLimit: 10
+  defaultBackend:
+    enabled: false
+  rbac:
+    create: true
+    scope: false
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: true
+  tcp: {}
+  udp: {}

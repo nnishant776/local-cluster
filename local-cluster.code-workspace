@@ -1,0 +1,20 @@
+{
+    "settings": {
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "editor.renderLineHighlight": "all",
+        "editor.quickSuggestions": {
+            "other": "on"
+        },
+        "[go]": {
+            "editor.tabSize": 4
+        },
+        "[yaml]": {
+            "editor.guides.indentation": true
+        },
+        "[gotmpl]": {
+            "editor.tabSize": 2,
+            "editor.guides.indentation": true
+        }
+    }
+}

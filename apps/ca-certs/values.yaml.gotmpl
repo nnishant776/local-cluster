@@ -1,0 +1,17 @@
+commonLabels:
+  app.kubernetes.io/managed-by: "Helm"
+  meta.helm.sh/release-name: {{ .Release.Name | quote }}
+commonAnnotations:
+  meta.helm.sh/release-name: {{ .Release.Name | quote }}
+  meta.helm.sh/release-namespace: {{ .Release.Namespace | quote }}
+caConfig:
+  selfSigned: {{ .Values.global.tls.ca.selfSigned }}
+  commonName: {{ .Values.global.cluster.hostname }}
+  secret:
+    name: {{ .Values.global.tls.ca.secretName | quote }}
+  issuer:
+    name: {{ .Values.global.tls.ca.issuerName }}
+tls:
+  configMap:
+    name: {{ .Values.global.tls.cert.configMap.name }}
+    key: {{ .Values.global.tls.cert.configMap.key }}

@@ -1,0 +1,136 @@
+environments:
+  default:
+    values:
+      - global.yaml
+      - environments/k3d.yaml
+  k3d:
+    values:
+      - global.yaml
+      - environments/k3d.yaml
+  k3s:
+    values:
+      - global.yaml
+      - environments/k3s.yaml
+---
+lockFilePath: helmfile.lock
+helmDefaults:
+  args: []
+  diffArgs:
+    - "--suppress-secrets"
+  wait: true
+  timeout: 1800
+  waitForJobs: true
+  deleteWait: true
+  deleteTimeout: 300
+
+values:
+  - secrets.yaml
+  - env.yaml.gotmpl
+  - values.yaml
+
+templates:
+  default:
+    valuesTemplate:
+      - global: {{ .Values.global | toYaml | nindent 10 }}
+        secrets: {{ .Values.secrets | toYaml | nindent 10 }}
+
+repositories:
+  - name: jetstack
+    url: https://charts.jetstack.io
+  - name: grafana
+    url: https://grafana.github.io/helm-charts
+  - name: traefik
+    url: https://traefik.github.io/charts
+  - name: coredns
+    url: https://coredns.github.io/helm
+
+releases:
+  - name: ingress-controller
+    namespace: kube-system
+    installed: {{ .Values | get "ingress-controller.enabled" }}
+    chart: apps/ingress-controller
+    createNamespace: true
+    values:
+      - apps/ingress-controller/{{ get "ingress-controller.type" .Values }}/values.yaml
+      - {{  get "ingress-controller.type" .Values }}:
+          enabled: true
+
+  - name: cert-manager
+    namespace: cert-manager
+    installed: {{ .Values | get "cert-manager.enabled" }}
+    chart: jetstack/cert-manager
+    version: v1.17.1
+    createNamespace: true
+    values:
+      - apps/cert-manager/values.yaml
+
+  - name: trust-manager
+    namespace: cert-manager
+    installed: {{ .Values | get "trust-manager.enabled" }}
+    chart: jetstack/trust-manager
+    version: 0.16.0
+    createNamespace: true
+    needs:
+      - cert-manager/cert-manager
+    values:
+      - apps/trust-manager/values.yaml
+
+  - name: ca-certs
+    namespace: cert-manager
+    installed: {{ .Values | get "ca-certs.enabled" }}
+    chart: apps/ca-certs
+    createNamespace: true
+    inherit:
+      - template: default
+    needs:
+      - cert-manager/trust-manager
+    values:
+      - apps/ca-certs/values.yaml.gotmpl
+      - {{ get "ca-certs" .Values | toYaml | nindent 8 }}
+
+  - name: grafana
+    namespace: monitoring
+    installed: {{ .Values.grafana.enabled }}
+    chart: grafana/grafana
+    version: 8.10.4
+    createNamespace: true
+    inherit:
+      - template: default
+    values:
+      - apps/grafana/values.yaml.gotmpl
+      - {{ .Values.grafana | toYaml | nindent 8 }}
+
+  - name: loki
+    namespace: monitoring
+    installed: {{ .Values.loki.enabled }}
+    chart: grafana/loki
+    version: 6.29.0
+    createNamespace: true
+    inherit:
+      - template: default
+    values:
+      - apps/loki/values.yaml.gotmpl
+      - {{ .Values.loki | toYaml | nindent 8 }}
+
+  - name: alloy
+    namespace: monitoring
+    installed: {{ .Values.alloy.enabled }}
+    chart: grafana/alloy
+    version: 0.12.5
+    createNamespace: true
+    inherit:
+      - template: default
+    values:
+      - apps/alloy/values.yaml.gotmpl
+      - {{ .Values.alloy | toYaml | nindent 8 }}
+
+  - name: dnsserver
+    namespace: nameserver
+    installed: {{ .Values.dnsserver.enabled }}
+    chart: apps/dnsserver
+    createNamespace: true
+    inherit:
+      - template: default
+    values:
+      - apps/dnsserver/values.yaml.gotmpl
+      - {{ .Values.dnsserver | toYaml | nindent 8 }}

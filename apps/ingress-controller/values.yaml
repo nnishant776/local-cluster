@@ -1,0 +1,4 @@
+traefik:
+  enabled: false
+ingress-nginx:
+  enabled: false

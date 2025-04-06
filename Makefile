@@ -35,7 +35,6 @@ setup: .env
 cluster: action:=
 cluster: setup
 ifeq ($(action), create)
-	export $$(cat .env) ORIGIN='$$ORIGIN' TTL='$$TTL'; cd cluster/bootstrap; cat coredns-custom.yaml.in | envsubst | tee coredns-custom.yaml 2>&1 > /dev/null
 	export $$(cat .env); cd cluster; cat config.yaml | envsubst | k3d cluster create --config -
 else ifeq ($(action), destroy)
 	k3d cluster delete $(cluster_name)

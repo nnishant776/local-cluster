@@ -1,0 +1,156 @@
+traefik:
+  deployment:
+    # -- Enable deployment
+    enabled: true
+    # -- Deployment or DaemonSet
+    kind: Deployment
+    replicas: 1
+    terminationGracePeriodSeconds: 60
+    shareProcessNamespace: false
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
+    name: "traefik"
+  experimental:
+    abortOnPluginFailure: false
+    fastProxy:
+      enabled: false
+      debug: false
+    kubernetesGateway:
+      enabled: false
+  gateway:
+    enabled: false
+  gatewayClass:
+    enabled: true
+  ingressRoute:
+    dashboard:
+      enabled: false
+    healthcheck:
+      enabled: false
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  readinessProbe:
+    failureThreshold: 1
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 2
+  livenessProbe:
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 2
+
+  providers:
+    kubernetesCRD:
+      enabled: true
+      allowCrossNamespace: true
+      allowExternalNameServices: true
+      allowEmptyServices: true
+      nativeLBByDefault: true
+    kubernetesIngress:
+      enabled: true
+      allowExternalNameServices: true
+      allowEmptyServices: true
+      publishedService:
+        enabled: true
+      nativeLBByDefault: true
+    kubernetesGateway:
+      enabled: true
+      # This option currently enables support for TCPRoute and TLSRoute.
+      experimentalChannel: false
+      nativeLBByDefault: true
+    file:
+      enabled: false
+  logs:
+    general:
+      format: "common"
+      level: "INFO"
+      noColor: true
+    access:
+      enabled: false
+  metrics:
+    addInternals: false
+    prometheus:
+      entryPoint: metrics
+      manualRouting: false
+      service:
+        enabled: false
+      serviceMonitor:
+        enabled: false
+      prometheusRule:
+        enabled: false
+    otlp:
+      enabled: false
+      http:
+        enabled: false
+      grpc:
+        enabled: false
+  tracing:
+    addInternals: false
+    otlp:
+      enabled: false
+      http:
+        enabled: false
+  globalArguments:
+  - "--global.checknewversion"
+  - "--global.sendanonymoususage"
+  env: []
+  envFrom: []
+  ports:
+    traefik:
+      port: 8080
+      expose:
+        default: false
+      exposedPort: 8080
+      protocol: TCP
+    web:
+      port: 8000
+      expose:
+        default: true
+      exposedPort: 80
+      protocol: TCP
+    websecure:
+      port: 8443
+      expose:
+        default: true
+      exposedPort: 443
+      protocol: TCP
+      http3:
+        enabled: false
+      tls:
+        enabled: false
+    metrics:
+      port: 9100
+      expose:
+        default: false
+      exposedPort: 9100
+      protocol: TCP
+  service:
+    enabled: true
+    single: true
+    type: LoadBalancer
+  autoscaling:
+    enabled: false
+  persistence:
+    enabled: false
+  certificatesResolvers: {}
+  hostNetwork: false
+  rbac:
+    enabled: true
+    namespaced: false
+  podSecurityPolicy:
+    enabled: false
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: [ALL]
+    readOnlyRootFilesystem: true
