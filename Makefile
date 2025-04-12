@@ -23,11 +23,11 @@ setup: .env
 		curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=$(k3d_version) bash ; \
 	fi
 	if ! command -v kubectl; then \
-		. ./lib.sh; curl -fSLGO "https://dl.k8s.io/release/$(kubectl_version)/bin/linux/$$(cpuArch)/kubectl" ; \
+		. ./scripts/lib.sh; curl -fSLGO "https://dl.k8s.io/release/$(kubectl_version)/bin/linux/$$(cpuArch)/kubectl" ; \
 		chmod 0755 kubectl; sudo mv kubectl /usr/local/bin ; \
 	fi
 	if ! command -v k9s; then \
-		. ./lib.sh; curl -fSLGO https://github.com/derailed/k9s/releases/download/$(k9s_version)/k9s_$$(uname)_$$(cpuArch).tar.gz ; \
+		. ./scripts/lib.sh; curl -fSLGO https://github.com/derailed/k9s/releases/download/$(k9s_version)/k9s_$$(uname)_$$(cpuArch).tar.gz ; \
 		tar -xf k9s_$$(uname)_$$(cpuArch).tar.gz; chmod 0755 k9s; sudo mv k9s /usr/local/bin; rm k9s_$$(uname)_$$(cpuArch).tar.gz ; \
 	fi
 
@@ -93,5 +93,5 @@ endif
 cert: type:=
 cert:
 ifeq ($(type), CA)
-	export $$(cat .env); . ./lib.sh; genCA;
+	export $$(cat .env); . ./scripts/lib.sh; genCA;
 endif
