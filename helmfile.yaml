@@ -1,18 +1,25 @@
 environments:
   default:
     values:
-      - global.yaml
+      - config.yaml
+      - values.yaml
+      - secrets.yaml
       - environments/k3d.yaml
   k3d:
     values:
-      - global.yaml
+      - config.yaml
+      - values.yaml
+      - secrets.yaml
       - environments/k3d.yaml
   k3s:
     values:
-      - global.yaml
+      - config.yaml
+      - values.yaml
+      - secrets.yaml
       - environments/k3s.yaml
 ---
 lockFilePath: helmfile.lock
+
 helmDefaults:
   args: []
   diffArgs:
@@ -22,11 +29,7 @@ helmDefaults:
   waitForJobs: true
   deleteWait: true
   deleteTimeout: 300
-
-values:
-  - secrets.yaml
-  - env.yaml.gotmpl
-  - values.yaml
+  createNamespace: true
 
 templates:
   default:
@@ -47,29 +50,26 @@ repositories:
 releases:
   - name: ingress-controller
     namespace: kube-system
-    installed: {{ .Values | get "ingress-controller.enabled" }}
+    installed: {{ .Values | get "apps.ingress-controller.enabled" }}
     chart: apps/ingress-controller
-    createNamespace: true
     values:
-      - apps/ingress-controller/{{ get "ingress-controller.type" .Values }}/values.yaml
-      - {{  get "ingress-controller.type" .Values }}:
+      - apps/ingress-controller/{{ get "apps.ingress-controller.type" .Values }}/values.yaml
+      - {{  get "apps.ingress-controller.type" .Values }}:
           enabled: true
 
   - name: cert-manager
     namespace: cert-manager
-    installed: {{ .Values | get "cert-manager.enabled" }}
+    installed: {{ .Values | get "apps.cert-manager.enabled" }}
     chart: jetstack/cert-manager
     version: v1.17.1
-    createNamespace: true
     values:
       - apps/cert-manager/values.yaml
 
   - name: trust-manager
     namespace: cert-manager
-    installed: {{ .Values | get "trust-manager.enabled" }}
+    installed: {{ .Values | get "apps.trust-manager.enabled" }}
     chart: jetstack/trust-manager
     version: 0.16.0
-    createNamespace: true
     needs:
       - cert-manager/cert-manager
     values:
@@ -77,60 +77,65 @@ releases:
 
   - name: ca-certs
     namespace: cert-manager
-    installed: {{ .Values | get "ca-certs.enabled" }}
+    installed: {{ .Values | get "apps.ca-certs.enabled" }}
     chart: apps/ca-certs
-    createNamespace: true
     inherit:
       - template: default
     needs:
       - cert-manager/trust-manager
     values:
       - apps/ca-certs/values.yaml.gotmpl
-      - {{ get "ca-certs" .Values | toYaml | nindent 8 }}
+      - {{ .Values | get "apps.ca-certs" | toYaml | nindent 8 }}
 
   - name: grafana
     namespace: monitoring
-    installed: {{ .Values.grafana.enabled }}
+    installed: {{ .Values | get "apps.grafana.enabled" }}
     chart: grafana/grafana
     version: 8.10.4
-    createNamespace: true
     inherit:
       - template: default
     values:
       - apps/grafana/values.yaml.gotmpl
-      - {{ .Values.grafana | toYaml | nindent 8 }}
+      - {{ .Values | get "apps.grafana" | toYaml | nindent 8 }}
 
   - name: loki
     namespace: monitoring
-    installed: {{ .Values.loki.enabled }}
+    installed: {{ .Values | get "apps.loki.enabled" }}
     chart: grafana/loki
     version: 6.29.0
-    createNamespace: true
     inherit:
       - template: default
     values:
       - apps/loki/values.yaml.gotmpl
-      - {{ .Values.loki | toYaml | nindent 8 }}
+      - {{ .Values | get "apps.loki" | toYaml | nindent 8 }}
 
   - name: alloy
     namespace: monitoring
-    installed: {{ .Values.alloy.enabled }}
+    installed: {{ .Values | get "apps.alloy.enabled" }}
     chart: grafana/alloy
     version: 0.12.5
-    createNamespace: true
     inherit:
       - template: default
     values:
       - apps/alloy/values.yaml.gotmpl
-      - {{ .Values.alloy | toYaml | nindent 8 }}
+      - {{ .Values | get "apps.alloy" | toYaml | nindent 8 }}
 
   - name: dnsserver
     namespace: nameserver
-    installed: {{ .Values.dnsserver.enabled }}
+    installed: {{ .Values | get "apps.dnsserver.enabled" }}
     chart: apps/dnsserver
-    createNamespace: true
     inherit:
       - template: default
     values:
       - apps/dnsserver/values.yaml.gotmpl
-      - {{ .Values.dnsserver | toYaml | nindent 8 }}
+      - {{ .Values | get "apps.dnsserver" | toYaml | nindent 8 }}
+
+  - name: cluster
+    installed: {{ getOrNil "installed" .Values | default false }}
+    chart: cluster/{{ .Environment.Name }}
+    version: 0.1.0
+    values:
+      - config.yaml
+    postRenderer: tee
+    postRendererArgs:
+      - cluster/{{ .Environment.Name }}/config.yaml

@@ -9,6 +9,21 @@ export k9s_version:=v0.40.10
 export data_path_src:=/mnt/$(cluster_name)
 export data_path_dest:=/mnt
 
+cmd_prefix:= docker run \
+	--rm \
+	--env-file .env \
+	--network host \
+	--security-opt seccomp=unconfined \
+	--security-opt label=disable \
+	-v $(projroot):$(projroot) \
+	-v $$HOME:$$HOME:ro \
+	-v $$HOME/.cache/helm:/helm/.cache/helm \
+	-v $$HOME/.config/helm:/helm/.config/helm \
+	-v $$HOME/.kube/config:/helm/.kube/config:ro \
+	-it \
+	-w $(projroot) \
+	ghcr.io/helmfile/helmfile:v0.171.0
+
 .env:
 	echo "PROJECT_ROOT=$(projroot)" >> .env
 	echo "CLUSTER_HOSTNAME=$(cluster_hostname)" >> .env
@@ -42,50 +57,15 @@ else
 	echo "Unknown action. Exiting"
 endif
 
-addons: actions:=
-addons: setup
+apps: actions:=
+apps: name:=
+apps: setup
 ifeq ($(action), install)
-	docker run \
-		--rm \
-		--env-file .env \
-		--network host \
-		--security-opt seccomp=unconfined \
-		--security-opt label=disable \
-		-v $(projroot):$(projroot):ro \
-		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/helm/.kube/config:ro \
-		-it \
-		-w $(projroot) \
-		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile sync -f $(projroot)/addons/helmfile.yaml
+	$(cmd_prefix) helmfile sync -f $(projroot)/helmfile.yaml $(shell [ ! -z $(name) ] && echo "-l name=$(name)")
 else ifeq ($(action), uninstall)
-	docker run \
-		--rm \
-		--env-file .env \
-		--network host \
-		--security-opt seccomp=unconfined \
-		--security-opt label=disable \
-		-v $(projroot):$(projroot):ro \
-		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/helm/.kube/config:ro \
-		-it \
-		-w $(projroot) \
-		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile destroy -f $(projroot)/addons/helmfile.yaml
+	$(cmd_prefix) helmfile destroy -f $(projroot)/helmfile.yaml $(shell [ ! -z $(name) ] && echo "-l name=$(name)")
 else ifeq ($(action), debug)
-	docker run \
-		--rm \
-		--env-file .env \
-		--network host \
-		--security-opt seccomp=unconfined \
-		--security-opt label=disable \
-		-v $(projroot):$(projroot):ro \
-		-v $$HOME:$$HOME:ro \
-		-v $$HOME/.kube/config:/helm/.kube/config:ro \
-		-it \
-		-w $(projroot) \
-		ghcr.io/helmfile/helmfile:v0.171.0 \
-		helmfile template -f $(projroot)/addons/helmfile.yaml --debug
+	$(cmd_prefix) helmfile template -f $(projroot)/helmfile.yaml --debug $(shell [ ! -z $(name) ] && echo "-l name=$(name)")
 else
 	echo "Unknown action. Exiting"
 endif

@@ -1,0 +1,45 @@
+infra:
+  rootDomain: &san local.cluster.dev
+  tls:
+    privateCA:
+      countryCode: UC
+      state: Andromeda
+      locality: Mirach
+      commonName: universe.com
+      organization: Constellation
+      organizationUnit: Development
+      emailAddress: mail@universe.com
+deployment:
+  environment: k3d     # k3d, k3s
+  cluster:             # Values for cluster should reflect based on environment
+    name: docker-k3s
+    version: v1.30.6-k3s1
+    nodes:
+      server: 1        # For HA, set 3
+      worker: 2        # Number of worker nodes (applicable in containerized clusters)
+    dataPath:
+      host: /mnt
+      cluster: /mnt
+    extraMounts: []
+    network:
+      subnet: "172.28.0.0/16"
+    apiServer:
+      ip: "127.0.0.1"
+      port: "6443"
+    services:
+      loadBalancer: true
+      ingressController: false
+    bootstrap:
+      dns: true
+    registry:
+      mirror:
+        endpoints: []
+          # - host: "registry.local.cluster.dev:5000"
+          #   auth:
+          #     username:  # username
+          #     password:  # password
+          #   tls:
+          #     enabled: false
+          #     cert_file: # path to the cert file used in the registry
+          #     key_file:  # path to the key file used in the registry
+          #     ca_file:   # path to the ca file used in the registry

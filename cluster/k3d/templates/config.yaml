@@ -1,0 +1,91 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+servers: {{ .Values.deployment.cluster.nodes.server }}
+agents: {{ .Values.deployment.cluster.nodes.worker }}
+metadata:
+  name: {{ .Values.deployment.cluster.name }}
+kubeAPI:
+  host: {{ .Values.infra.rootDomain }}
+  hostIP: {{ .Values.deployment.cluster.apiServer.ip | quote }}
+  hostPort: {{ .Values.deployment.cluster.apiServer.port | quote }}
+image: rancher/k3s:{{ .Values.deployment.cluster.version }}
+subnet: {{ .Values.deployment.cluster.network.subnet }}
+volumes:
+  - volume: {{ .Values.deployment.cluster.dataPath.host }}:{{ .Values.deployment.cluster.dataPath.cluster }}   # Make sure the source directory exists
+    nodeFilters:
+      - server:*
+      - agent:*
+  {{- range $index, $mountCfg := .Values.deployment.cluster.extraMounts }}
+  - volume: {{ $mountCfg.host}}:{{ $mountCfg.cluster }}
+    nodeFilters:
+      - server:*
+      - agent:*
+  {{- end }}
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+  {{- if .Values.deployment.cluster.bootstrap.dns }}
+  - port: 53:53
+    nodeFilters:
+      - loadbalancer
+  {{- end }}
+{{- if .Values.deployment.cluster.registry }}
+registries:
+  config: |
+    mirrors:
+    {{- if .Values.deployment.cluster.registry.mirror.endpoints }}
+      "*":
+        endpoint:
+          {{- range $index, $regCfg := .Values.deployment.cluster.registry.mirror.endpoints }}
+          - {{- if and $regCfg.tls $regCfg.tls.enabled }} https://{{ $regCfg.host }}{{- else }} http://{{ $regCfg.host }}{{- end }}
+          {{- end }}
+    {{- else }}
+    {{- ` {}` }}
+    {{- end }}
+    configs:
+    {{- if .Values.deployment.cluster.registry.mirror.endpoints }}
+    {{- range $index, $regCfg := .Values.deployment.cluster.registry.mirror.endpoints }}
+      {{ $regCfg.host | quote }}:
+        {{- if $regCfg.auth }}
+        auth: {{- $regCfg.auth | toYaml | nindent 10 }}
+        {{- else }}
+        auth: {{- `{}` | nindent 10 }}
+        {{- end }}
+        {{- if $regCfg.tls }}
+        tls: {{- omit $regCfg.tls "enabled" | toYaml | nindent 10 }}
+        {{- else }}
+        tls: {{- `{}` | nindent 10 }}
+        {{- end }}
+    {{- end }}
+    {{- else }}
+      {{- ` {}` }}
+    {{- end }}
+{{- end }}
+options:
+  k3d:
+    wait: true
+    timeout: "60s"
+    disableLoadbalancer: {{ not .Values.deployment.cluster.services.loadBalancer }}
+    disableImageVolume: false
+    disableRollback: false
+    loadbalancer:
+      configOverrides:
+        - settings.workerConnections=2048
+  k3s:
+    extraArgs:
+      - arg: "--tls-san={{ .Values.infra.rootDomain }}"
+        nodeFilters:
+          - server:*
+      {{- if not .Values.deployment.cluster.services.ingressController }}
+      - arg: "--disable=traefik"
+        nodeFilters:
+          - server:*
+      {{- end }}
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

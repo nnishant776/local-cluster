@@ -1,0 +1,5 @@
+token: "provenance"
+write-kubeconfig-mode: "0644"
+tls-san:
+  - {{ .Values.infra.rootDomain }}
+cluster-init: true

@@ -4,3 +4,5 @@
 *.crt
 *.key
 *.tgz
+*.lock
+/cluster/*/config.yaml

@@ -6,7 +6,7 @@ commonAnnotations:
   meta.helm.sh/release-namespace: {{ .Release.Namespace | quote }}
 caConfig:
   selfSigned: {{ .Values.global.tls.ca.selfSigned }}
-  commonName: {{ .Values.global.cluster.hostname }}
+  commonName: {{ .Values.infra.rootDomain }}
   secret:
     name: {{ .Values.global.tls.ca.secretName | quote }}
   issuer:

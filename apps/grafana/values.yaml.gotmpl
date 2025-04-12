@@ -53,11 +53,11 @@ ingress:
   path: /
   pathType: Prefix
   hosts:
-    - monitoring.{{ .Values.global.cluster.hostname }}
+    - monitoring.{{ .Values.infra.rootDomain }}
   tls:
   - secretName: monitoring-cert
     hosts:
-      - monitoring.{{ .Values.global.cluster.hostname }}
+      - monitoring.{{ .Values.infra.rootDomain }}
 persistence:
   enabled: false
 initChownData:
@@ -77,7 +77,7 @@ grafana.ini:
   grafana_net:
     url: https://grafana.net
   server:
-    domain: "monitoring.{{ .Values.global.cluster.hostname }}"
+    domain: "monitoring.{{ .Values.infra.rootDomain }}"
 ldap:
   enabled: false
 assertNoLeakedSecrets: true
