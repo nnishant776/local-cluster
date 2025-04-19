@@ -48,8 +48,15 @@ setup: .env
 
 
 cluster: action:=
+cluster: environment:=k3d
 cluster: setup
 ifeq ($(action), create)
+	$(cmd_prefix) helmfile \
+		--environment $(environment) \
+		template \
+		-l name=cluster \
+		--state-values-set installed=true \
+		--disable-force-update
 	export $$(cat .env); cd cluster; cat config.yaml | envsubst | k3d cluster create --config -
 else ifeq ($(action), destroy)
 	k3d cluster delete $(cluster_name)

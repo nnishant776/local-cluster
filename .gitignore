@@ -5,4 +5,4 @@
 *.key
 *.tgz
 *.lock
-/cluster/*/config.yaml
+/cluster/config.yaml

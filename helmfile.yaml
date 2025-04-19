@@ -138,4 +138,4 @@ releases:
       - config.yaml
     postRenderer: tee
     postRendererArgs:
-      - cluster/{{ .Environment.Name }}/config.yaml
+      - cluster/config.yaml
