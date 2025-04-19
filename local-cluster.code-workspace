@@ -1,4 +1,9 @@
 {
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
     "settings": {
         "files.trimFinalNewlines": true,
         "files.trimTrailingWhitespace": true,
