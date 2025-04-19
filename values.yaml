@@ -24,6 +24,8 @@ apps:
   ingress-controller:
     enabled: true
     type: "traefik" # ingress-nginx, traefik
+  etcd:
+    enabled: true
   dnsserver:
     enabled: true
     zones: []

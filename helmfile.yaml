@@ -120,6 +120,15 @@ releases:
       - apps/alloy/values.yaml.gotmpl
       - {{ .Values | get "apps.alloy" | toYaml | nindent 8 }}
 
+  - name: etcd
+    namespace: kube-system
+    installed: {{ .Values | get "apps.etcd.enabled" }}
+    chart: apps/etcd
+    inherit:
+      - template: default
+    values:
+      - {{ .Values | get "apps.etcd" | toYaml | nindent 8 }}
+
   - name: dnsserver
     namespace: nameserver
     installed: {{ .Values | get "apps.dnsserver.enabled" }}
