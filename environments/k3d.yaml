@@ -14,3 +14,7 @@ global:
       - ip: "35.241.23.245"
         hostnames:
           - "grafana.net"
+deployment:
+  cluster:
+    network:
+      subnet: "172.28.0.0/16"
