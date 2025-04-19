@@ -6,7 +6,7 @@ agents: {{ .Values.deployment.cluster.nodes.worker }}
 metadata:
   name: {{ .Values.deployment.cluster.name }}
 kubeAPI:
-  host: {{ .Values.infra.rootDomain }}
+  host: {{ .Values.deployment.cluster.apiServer.ip | quote }}
   hostIP: {{ .Values.deployment.cluster.apiServer.ip | quote }}
   hostPort: {{ .Values.deployment.cluster.apiServer.port | quote }}
 image: rancher/k3s:{{ .Values.deployment.cluster.version }}
