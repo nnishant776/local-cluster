@@ -38,8 +38,8 @@ ports:
 registries:
   config: |
     mirrors:
-    {{- if .Values.deployment.cluster.registry.mirror.endpoints }}
       "*":
+    {{- if .Values.deployment.cluster.registry.mirror.endpoints }}
         endpoint:
           {{- range $index, $regCfg := .Values.deployment.cluster.registry.mirror.endpoints }}
           - {{- if and $regCfg.tls $regCfg.tls.enabled }} https://{{ $regCfg.host }}{{- else }} http://{{ $regCfg.host }}{{- end }}
