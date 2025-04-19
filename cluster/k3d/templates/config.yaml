@@ -86,6 +86,11 @@ options:
         nodeFilters:
           - server:*
       {{- end }}
+      {{- if not .Values.deployment.cluster.services.metricsServer }}
+      - arg: "--disable=metrics-server"
+        nodeFilters:
+          - server:*
+      {{- end }}
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
