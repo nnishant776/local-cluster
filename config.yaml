@@ -27,6 +27,7 @@ deployment:
     services:
       loadBalancer: true
       ingressController: false
+      metricsServer: false
     bootstrap:
       dns: true
     registry:
