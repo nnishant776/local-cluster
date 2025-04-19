@@ -34,7 +34,7 @@ ports:
     nodeFilters:
       - loadbalancer
   {{- end }}
-{{- if .Values.deployment.cluster.registry }}
+{{- if .Values.deployment.cluster.registry.enabled }}
 registries:
   config: |
     mirrors:

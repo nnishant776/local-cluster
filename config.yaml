@@ -32,6 +32,7 @@ deployment:
     bootstrap:
       dns: true
     registry:
+      enabled: true
       mirror:
         endpoints: []
           # - host: "registry.local.cluster.dev:5000"
