@@ -22,6 +22,7 @@ volumes:
       - server:*
       - agent:*
   {{- end }}
+{{- if .Values.deployment.cluster.services.loadBalancer }}
 ports:
   - port: 80:80
     nodeFilters:
@@ -34,6 +35,7 @@ ports:
     nodeFilters:
       - loadbalancer
   {{- end }}
+{{- end }}
 {{- if .Values.deployment.cluster.registry.enabled }}
 registries:
   config: |
