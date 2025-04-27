@@ -93,6 +93,11 @@ options:
         nodeFilters:
           - server:*
       {{- end }}
+      {{- if not .Values.deployment.cluster.services.loadBalancer }}
+      - arg: "--disable=servicelb"
+        nodeFilters:
+          - server:*
+      {{- end }}
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true

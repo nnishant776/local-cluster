@@ -25,7 +25,7 @@ deployment:
       ip: "127.0.0.1"
       port: "6443"
     services:
-      loadBalancer: true
+      loadBalancer: false
       ingressController: false
       metricsServer: false
     bootstrap:
