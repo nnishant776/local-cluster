@@ -13,10 +13,10 @@ deployment:
   environment: k3d     # k3d, k3s
   cluster:             # Values for cluster should reflect based on environment
     name: docker-k3s
-    version: v1.30.6-k3s1
     nodes:
       server: 1        # For HA, set 3
       worker: 2        # Number of worker nodes (applicable in containerized clusters)
+    k8sVersion: v1.30.6-k3s1
     dataPath:
       host: /mnt
       cluster: /mnt

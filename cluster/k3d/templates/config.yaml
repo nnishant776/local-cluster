@@ -9,7 +9,7 @@ kubeAPI:
   host: {{ .Values.deployment.cluster.apiServer.ip | quote }}
   hostIP: {{ .Values.deployment.cluster.apiServer.ip | quote }}
   hostPort: {{ .Values.deployment.cluster.apiServer.port | quote }}
-image: rancher/k3s:{{ .Values.deployment.cluster.version }}
+image: rancher/k3s:{{ .Values.deployment.cluster.k8sVersion }}
 subnet: {{ .Values.deployment.cluster.network.subnet }}
 volumes:
   - volume: {{ .Values.deployment.cluster.dataPath.host }}:{{ .Values.deployment.cluster.dataPath.cluster }}   # Make sure the source directory exists
