@@ -16,7 +16,7 @@ volumes:
     nodeFilters:
       - server:*
       - agent:*
-  {{- range $index, $mountCfg := .Values.deployment.cluster.extraMounts }}
+  {{- range $index, $mountCfg := .Values.deployment.cluster.volumeMounts }}
   - volume: {{ $mountCfg.host}}:{{ $mountCfg.cluster }}
     nodeFilters:
       - server:*

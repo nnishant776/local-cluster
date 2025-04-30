@@ -17,7 +17,7 @@ deployment:
     dataPath:
       host: /mnt
       cluster: /mnt
-    extraMounts: []
+    volumeMounts: []
     services:
       loadBalancer: false
       ingressController: false
