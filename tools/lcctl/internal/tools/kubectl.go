@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewKubectlCommand(envConfig map[string]string) *cobra.Command {
+func NewKubectlCommand(envConfig map[string]any) *cobra.Command {
 	return &cobra.Command{
 		Use:  "kubectl",
 		Long: "Run kubectl commands on the cluster",

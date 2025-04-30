@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewShellCommand(envConfig map[string]string) *cobra.Command {
+func NewShellCommand(envConfig map[string]any) *cobra.Command {
 	return &cobra.Command{
 		Use:  "shell",
 		Long: "Run shell commands in the cluster tools environment",

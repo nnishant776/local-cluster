@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewHelmfileCommand(envConfig map[string]string) *cobra.Command {
+func NewHelmfileCommand(envConfig map[string]any) *cobra.Command {
 	return &cobra.Command{
 		Use:  "helmfile",
 		Long: "Run helmfile commands on the cluster",
