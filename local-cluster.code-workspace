@@ -7,7 +7,9 @@
     "settings": {
         "files.trimFinalNewlines": true,
         "files.trimTrailingWhitespace": true,
+        "window.filename": "rootrel",
         "editor.renderLineHighlight": "all",
+        "editor.suggestOnTriggerCharacters": true,
         "editor.quickSuggestions": {
             "other": "on"
         },
