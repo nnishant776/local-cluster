@@ -18,3 +18,9 @@ deployment:
   cluster:
     network:
       subnet: "172.28.0.0/16"
+    nodes:
+      server: 1        # For HA, set 3
+      worker: 2        # Number of worker nodes (applicable in containerized clusters)
+    apiServer:
+      ip: "127.0.0.1"
+      port: "6443"

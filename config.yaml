@@ -13,17 +13,11 @@ deployment:
   environment: k3d     # k3d, k3s
   cluster:             # Values for cluster should reflect based on environment
     name: docker-k3s
-    nodes:
-      server: 1        # For HA, set 3
-      worker: 2        # Number of worker nodes (applicable in containerized clusters)
     k8sVersion: v1.30.6-k3s1
     dataPath:
       host: /mnt
       cluster: /mnt
     extraMounts: []
-    apiServer:
-      ip: "127.0.0.1"
-      port: "6443"
     services:
       loadBalancer: false
       ingressController: false
