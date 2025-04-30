@@ -93,6 +93,11 @@ options:
         nodeFilters:
           - server:*
       {{- end }}
+      {{- if not .Values.deployment.cluster.services.storageProvisioner }}
+      - arg: "--disable=local-storage"
+        nodeFilters:
+          - server:*
+      {{- end }}
       {{- if not .Values.deployment.cluster.services.loadBalancer }}
       - arg: "--disable=servicelb"
         nodeFilters:
