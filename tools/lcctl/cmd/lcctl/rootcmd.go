@@ -79,9 +79,7 @@ func clusterCmd() *cobra.Command {
 			return addClusterCmds(cmd)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// cmd.Run = nil
 			cmd.RunE = nil
-			// cmd.PreRun = nil
 			cmd.PreRunE = nil
 
 			if len(args) == 0 {
@@ -136,6 +134,7 @@ func addClusterCmds(cmd *cobra.Command) error {
 			k3dCmd := k3dc.NewK3DClusterCommand(k3dClusterCfg)
 			cmd.AddCommand(k3dCmd.Commands()...)
 		}
+
 	case model.K3S:
 		if k3sClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3s.ClusterConfig); !ok {
 			return errstk.New(
