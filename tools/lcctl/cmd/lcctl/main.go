@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 
+	errstk "github.com/nnishant776/errstack"
 	"golang.org/x/sys/unix"
 )
 
@@ -16,6 +17,10 @@ func main() {
 	cmd := newCLICmds()
 	err := cmd.ExecuteContext(ctx)
 	if err != nil {
-		fmt.Printf("Failed to execute command: %s", err)
+		fmt.Printf("Failed to execute command: %s\n", err)
+		if e, ok := err.(errstk.Backtracer); ok &&
+			cmd.Flags().Lookup("verbose").Value.String() == "true" {
+			fmt.Printf("%s\n", e.Backtrace())
+		}
 	}
 }
