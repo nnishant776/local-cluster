@@ -26,6 +26,12 @@ func rootCmd() *cobra.Command {
 		Use:   "lcctl",
 		Short: "lcctl is a tool controlling the local cluster deployment",
 		Long:  "lcctl is a tool controlling the local cluster deployment",
+		CompletionOptions: cobra.CompletionOptions{
+			DisableDefaultCmd:   true,
+			DisableNoDescFlag:   false,
+			DisableDescriptions: false,
+			HiddenDefaultCmd:    false,
+		},
 	}
 }
 
