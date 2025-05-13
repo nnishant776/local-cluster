@@ -22,7 +22,7 @@ func newCLICmds() *cobra.Command {
 }
 
 func rootCmd() *cobra.Command {
-	return &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "lcctl",
 		Short: "lcctl is a tool controlling the local cluster deployment",
 		Long:  "lcctl is a tool controlling the local cluster deployment",
@@ -33,6 +33,12 @@ func rootCmd() *cobra.Command {
 			HiddenDefaultCmd:    false,
 		},
 	}
+
+	rootCmd.PersistentFlags().StringP(
+		"deploy-config", "d", "config.yaml", "--deploy-config <filename>",
+	)
+
+	return rootCmd
 }
 
 func toolsCmd() *cobra.Command {
