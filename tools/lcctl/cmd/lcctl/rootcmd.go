@@ -76,7 +76,7 @@ func clusterCmd() *cobra.Command {
 				return nil
 			}
 			clusterCmdsAdded = true
-			return addClusterCmds(cmd)
+			return addClusterSubcommands(cmd)
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cmd.RunE = nil
@@ -93,7 +93,7 @@ func clusterCmd() *cobra.Command {
 	rootCmd.SetHelpFunc(func(c *cobra.Command, s []string) {
 		if !clusterCmdsAdded {
 			clusterCmdsAdded = true
-			addClusterCmds(c)
+			addClusterSubcommands(c)
 		}
 
 		c.SetHelpFunc(nil)
@@ -106,7 +106,7 @@ func clusterCmd() *cobra.Command {
 
 }
 
-func addClusterCmds(cmd *cobra.Command) error {
+func addClusterSubcommands(cmd *cobra.Command) error {
 	// Extract the config file path
 	configPath := ""
 	if clusterCfg := cmd.Flag("deploy-config"); clusterCfg != nil {
