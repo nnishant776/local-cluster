@@ -34,6 +34,7 @@ cmd_prefix:= docker run \
 	echo "DATA_PATH_DEST=$(data_path_dest)" >> .env
 
 setup: .env
+	docker tag ghcr.io/helmfile/helmfile:v0.171.0 k8s-tools:v1.0.1
 	if ! command -v k3d; then \
 		curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=$(k3d_version) bash ; \
 	fi

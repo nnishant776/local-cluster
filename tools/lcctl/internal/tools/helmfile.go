@@ -3,6 +3,7 @@ package tools
 import (
 	"log"
 
+	"github.com/nnishant776/local-cluster/config"
 	"github.com/spf13/cobra"
 )
 
@@ -21,7 +22,7 @@ func helmfileCommandHandler(command *cobra.Command, args []string) error {
 	ctx := command.Context()
 	cmdArgs := []string{command.Name()}
 	cmdArgs = append(cmdArgs, args...)
-	req, err := prepareBaseContainerEnv("ghcr.io/helmfile/helmfile:v0.171.0", cmdArgs)
+	req, err := prepareBaseContainerEnv(config.IMAGE_NAME, cmdArgs)
 	if err != nil {
 		return err
 	}

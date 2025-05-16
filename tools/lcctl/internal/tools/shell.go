@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/nnishant776/local-cluster/config"
 	"github.com/spf13/cobra"
 )
 
@@ -28,7 +29,7 @@ func shellCommandHandler(command *cobra.Command, args []string) error {
 		attachTerm = false
 	}
 
-	req, err := prepareBaseContainerEnv("ghcr.io/helmfile/helmfile:v0.171.0", cmdArgs)
+	req, err := prepareBaseContainerEnv(config.IMAGE_NAME, cmdArgs)
 	if err != nil {
 		return err
 	}
