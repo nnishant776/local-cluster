@@ -22,34 +22,47 @@ type Config struct {
 	Deployment DeploymentConfig `json:"deployment,omitempty"`
 }
 
-type DeploymentConfig struct {
+type _DeploymentConfig struct {
 	Environment      ClusterBackend  `json:"environment,omitempty"`
 	RawClusterConfig json.RawMessage `json:"cluster,omitempty"`
-	ClusterConfig    any
+}
+
+type DeploymentConfig struct {
+	Environment   ClusterBackend `json:"environment,omitempty"`
+	ClusterConfig any
+}
+
+type ToolsConfig struct {
+	Image string      `json:"image,omitempty"`
+	Apps  []AppConfig `json:"apps,omitempty"`
+}
+
+type AppConfig struct {
+	Name      string `json:"name,omitempty"`
+	Installed bool   `json:"install,omitempty"`
+	Version   string `json:"version,omitempty"`
 }
 
 func (self *DeploymentConfig) UnmarshalJSON(b []byte) error {
-	type X DeploymentConfig
-
-	dc := X{}
+	dc := _DeploymentConfig{}
 	err := json.Unmarshal(b, &dc)
 	if err != nil {
 		return err
 	}
 
+	self.Environment = dc.Environment
+
 	switch dc.Environment {
 	case K3D:
-		dc.ClusterConfig = &k3d.ClusterConfig{}
+		self.ClusterConfig = &k3d.ClusterConfig{}
 	case K3S:
-		dc.ClusterConfig = &k3s.ClusterConfig{}
+		self.ClusterConfig = &k3s.ClusterConfig{}
 	}
 
-	err = json.Unmarshal(dc.RawClusterConfig, dc.ClusterConfig)
+	err = json.Unmarshal(dc.RawClusterConfig, self.ClusterConfig)
 	if err != nil {
 		return err
 	}
-
-	*self = (DeploymentConfig)(dc)
 
 	return nil
 }
