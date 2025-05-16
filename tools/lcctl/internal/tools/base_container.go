@@ -15,19 +15,12 @@ func prepareBaseContainerEnv(image string, command []string) (*container.CreateR
 	}
 
 	config := &container.Config{
-		// AttachStdin:  true,
-		// AttachStdout: true,
-		// AttachStderr: true,
-		// Tty:          true,
-		// OpenStdin:    true,
 		Image:      image,
 		Entrypoint: strslice.StrSlice(command),
 		WorkingDir: wd,
 	}
 
 	hostConfig := &container.HostConfig{
-		// CapAdd:      []string{},
-		// CapDrop:     []string{"ALL"},
 		NetworkMode: "host",
 		AutoRemove:  true,
 		Privileged:  false,
