@@ -40,7 +40,7 @@ func k3sGencfgCommand(_ *k3s.ClusterConfig) *cobra.Command {
 				"--state-values-set", "installed=true",
 			})
 			if err := helmfileCmd.ExecuteContext(cmd.Context()); err != nil {
-				return errstk.New(err, errstk.WithTraceback())
+				return errstk.New(err, errstk.WithStack())
 			}
 
 			// if outputPath != "cluster/config.yaml" {

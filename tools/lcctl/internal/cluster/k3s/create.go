@@ -37,7 +37,7 @@ func k3sCreateCommand(_ *k3s.ClusterConfig) *cobra.Command {
 			// Run the command till completion
 			if proc != nil {
 				if err := proc.Run(); err != nil {
-					return errstk.New(err, errstk.WithTraceback())
+					return errstk.New(err, errstk.WithStack())
 				}
 			}
 

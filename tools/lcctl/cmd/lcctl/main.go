@@ -18,9 +18,9 @@ func main() {
 	err := cmd.ExecuteContext(ctx)
 	if err != nil {
 		fmt.Printf("Failed to execute command: %s\n", err)
-		if e, ok := err.(errstk.Backtracer); ok &&
+		if e, ok := err.(errstk.StackTracer); ok &&
 			cmd.Flags().Lookup("verbose").Value.String() == "true" {
-			fmt.Printf("%s\n", e.Backtrace())
+			fmt.Printf("%s\n", e.StackTrace())
 		}
 	}
 }

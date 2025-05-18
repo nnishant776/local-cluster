@@ -4,7 +4,7 @@ go 1.23.5
 
 require (
 	github.com/docker/docker v28.1.1+incompatible
-	github.com/nnishant776/errstack v0.0.3
+	github.com/nnishant776/errstack v0.0.4
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0

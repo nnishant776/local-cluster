@@ -114,7 +114,7 @@ func addClusterSubcommands(cmd *cobra.Command) error {
 	} else {
 		return errstk.New(
 			errors.New("deployment config not found"),
-			errstk.WithTraceback(),
+			errstk.WithStack(),
 		)
 	}
 
@@ -128,7 +128,7 @@ func addClusterSubcommands(cmd *cobra.Command) error {
 		if k3dClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3d.ClusterConfig); !ok {
 			return errstk.New(
 				errors.New("invalid configuration: expected a k3d configuration"),
-				errstk.WithTraceback(),
+				errstk.WithStack(),
 			)
 		} else {
 			k3dCmd := k3dc.NewK3DClusterCommand(k3dClusterCfg)
@@ -139,7 +139,7 @@ func addClusterSubcommands(cmd *cobra.Command) error {
 		if k3sClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3s.ClusterConfig); !ok {
 			return errstk.New(
 				errors.New("invalid configuration: expected a k3s configuration"),
-				errstk.WithTraceback(),
+				errstk.WithStack(),
 			)
 		} else {
 			k3sCmd := k3sc.NewK3SClusterCommand(k3sClusterCfg)
