@@ -14,7 +14,11 @@ func k3dStartCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 		Short: "Start the cluster",
 		Long:  "Start the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			k3dCmd.SetArgs([]string{cfg.Name})
+			if len(args) <= 0 {
+				args = []string{cfg.Name}
+			}
+
+			k3dCmd.SetArgs(args)
 			err := k3dCmd.ExecuteContext(cmd.Context())
 			if err != nil {
 				err = errstk.New(err, errstk.WithStack())

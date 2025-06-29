@@ -20,18 +20,8 @@ func k3dCreateCommand(_ *k3d.ClusterConfig) *cobra.Command {
 				configPath = clusterCfg.Value.String()
 			}
 
-			if configPath != "" {
-				newArgs := []string{"--config", configPath}
-				for i := 0; i < len(args); i++ {
-					arg := args[i]
-					switch arg {
-					case "-c", "--config":
-						i += 2
-					default:
-						newArgs = append(newArgs, arg)
-					}
-				}
-				args = newArgs
+			if len(args) <= 0 {
+				args = []string{"--config", configPath}
 			}
 
 			k3dCmd.SetArgs(args)
