@@ -10,6 +10,14 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+func init() {
+	chainFmtOpts := errstk.DefaultChainErrorFormatter.Options()
+	chainFmtOpts.ErrorSeparator = "; "
+	chainFmtter := errstk.DefaultChainErrorFormatter.Copy()
+	chainFmtter.SetOptions(chainFmtOpts)
+	errstk.DefaultChainErrorFormatter = chainFmtter
+}
+
 func main() {
 	ctx, cancelFn := signal.NotifyContext(context.Background(), []os.Signal{unix.SIGTERM, unix.SIGINT}...)
 	defer cancelFn()

@@ -34,11 +34,14 @@ func rootCmd() *cobra.Command {
 		},
 	}
 
-	rootCmd.PersistentFlags().StringP(
-		"deploy-config", "d", "config.yaml", "--deploy-config <filename>",
+	rootCmd.PersistentFlags().String(
+		"deploy-config", "config.yaml", "--deploy-config <filename>",
 	)
-	rootCmd.PersistentFlags().BoolP(
-		"verbose", "v", false, "--verbose",
+	rootCmd.PersistentFlags().String(
+		"cluster-config", "cluster/config.yaml", "--cluster-config <filename>",
+	)
+	rootCmd.PersistentFlags().Bool(
+		"verbose", false, "--verbose",
 	)
 
 	return rootCmd
