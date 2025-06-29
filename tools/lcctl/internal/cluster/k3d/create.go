@@ -17,18 +17,18 @@ func k3dCreateCommand(_ *k3d.ClusterConfig) *cobra.Command {
 		Long:  "Create the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Extract the config file path
-			// configPath := ""
-			// if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
-			// 	configPath = clusterCfg.Value.String()
-			// } else {
-			// 	return errstk.New(
-			// 		errors.New("cluster configuration file not found"),
-			// 		errstk.WithTraceback(),
-			// 	)
-			// }
+			configPath := ""
+			if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
+				configPath = clusterCfg.Value.String()
+			} else {
+				return errstk.NewString(
+					"cluster configuration file not found",
+					errstk.WithStack(),
+				)
+			}
 
 			// Define the command
-			proc := exec.CommandContext(cmd.Context(), "k3d", "cluster", "create", "--config", "cluster/config.yaml")
+			proc := exec.CommandContext(cmd.Context(), "k3d", "cluster", "create", "--config", configPath)
 
 			// Connect outputs to the current process's outputs
 			proc.Stdout = os.Stdout
@@ -44,9 +44,6 @@ func k3dCreateCommand(_ *k3d.ClusterConfig) *cobra.Command {
 			return nil
 		},
 	}
-
-	// createFlags := createCmd.Flags()
-	// createFlags.StringP("cluster-config", "c", "cluster/config.yaml", "--cluster-config <filename>")
 
 	return createCmd
 }
