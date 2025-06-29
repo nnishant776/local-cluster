@@ -3,8 +3,10 @@ package conv
 import (
 	"encoding/json"
 
-	"gopkg.in/yaml.v3"
 	"io"
+
+	errstk "github.com/nnishant776/errstack"
+	"gopkg.in/yaml.v3"
 )
 
 func YamlToJson(dst io.Writer, src io.Reader) error {
@@ -12,8 +14,13 @@ func YamlToJson(dst io.Writer, src io.Reader) error {
 
 	err := yaml.NewDecoder(src).Decode(d)
 	if err != nil {
-		return err
+		return errstk.New(err, errstk.WithStack())
 	}
 
-	return json.NewEncoder(dst).Encode(d)
+	err = json.NewEncoder(dst).Encode(d)
+	if err != nil {
+		err = errstk.New(err, errstk.WithStack())
+	}
+
+	return err
 }
