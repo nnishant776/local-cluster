@@ -35,8 +35,8 @@ func shellCommandHandler(command *cobra.Command, args []string) error {
 	}
 
 	if attachTerm {
-		req.Tty = true
-		req.OpenStdin = true
+		req.Config.Tty = true
+		req.Config.OpenStdin = true
 	}
 
 	client, err := createContainerRuntimeClient()

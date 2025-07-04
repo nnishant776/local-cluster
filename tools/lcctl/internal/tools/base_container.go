@@ -3,12 +3,13 @@ package tools
 import (
 	"os"
 
+	"github.com/docker/docker/api/types/backend"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/strslice"
 )
 
-func prepareBaseContainerEnv(image string, command []string) (*container.CreateRequest, error) {
+func prepareBaseContainerEnv(image string, command []string) (*backend.ContainerCreateConfig, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -64,7 +65,7 @@ func prepareBaseContainerEnv(image string, command []string) (*container.CreateR
 		},
 	}
 
-	return &container.CreateRequest{
+	return &backend.ContainerCreateConfig{
 		Config:     config,
 		HostConfig: hostConfig,
 	}, nil

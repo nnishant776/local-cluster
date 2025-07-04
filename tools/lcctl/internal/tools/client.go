@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/docker/docker/api/types/backend"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	"github.com/docker/docker/pkg/stdcopy"
@@ -42,7 +43,7 @@ func containerInspect(ctx context.Context, client *client.Client, id string) err
 	return nil
 }
 
-func containerRun(ctx context.Context, client *client.Client, req *container.CreateRequest) error {
+func containerRun(ctx context.Context, client *client.Client, req *backend.ContainerCreateConfig) error {
 	// Fetch system information
 	sysInfo, infoErr := client.Info(ctx)
 	if infoErr != nil {
@@ -63,7 +64,7 @@ func containerRun(ctx context.Context, client *client.Client, req *container.Cre
 	}
 
 	// If tty is requested, put stdin in the terminal mode
-	if req.Tty {
+	if req.Config.Tty {
 		if fd := int(os.Stdin.Fd()); term.IsTerminal(fd) {
 			oldState, termErr := term.MakeRaw(fd)
 			if termErr != nil {
@@ -102,7 +103,7 @@ func containerRun(ctx context.Context, client *client.Client, req *container.Cre
 	}()
 
 	runErr := (error)(nil)
-	if req.Tty {
+	if req.Config.Tty {
 		// If in tty mode, start separate go-routines for routing stdin and stdout
 		go func() {
 			_, runErr = io.Copy(os.Stdout, attachResp.Reader)
