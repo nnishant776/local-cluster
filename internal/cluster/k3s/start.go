@@ -15,8 +15,21 @@ func k3sStartCommand(cfg *k3s.ClusterConfig) *cobra.Command {
 		Short: "Start the cluster",
 		Long:  "Start the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Extract the config file path
+			configPath := ""
+			if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
+				configPath = clusterCfg.Value.String()
+			}
+
+			newArgs := []string{"server"}
+			if len(args) <= 0 {
+				newArgs = append(newArgs, "--config", configPath)
+			} else {
+				newArgs = append(newArgs, args...)
+			}
+
 			// Define the command
-			proc := exec.CommandContext(cmd.Context(), "k3d", "cluster", "start", cfg.Name)
+			proc := exec.CommandContext(cmd.Context(), "k3s", newArgs...)
 
 			// Connect outputs to the current process's outputs
 			proc.Stdout = os.Stdout
