@@ -14,7 +14,8 @@
             "other": "on"
         },
         "[go]": {
-            "editor.tabSize": 4
+            "editor.tabSize": 4,
+            "editor.guides.context": true
         },
         "[yaml]": {
             "editor.guides.indentation": true
