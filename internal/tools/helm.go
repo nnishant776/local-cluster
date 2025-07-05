@@ -1,41 +1,26 @@
 package tools
 
 import (
-	"log"
+	"os"
 
-	"github.com/nnishant776/local-cluster/config"
 	"github.com/spf13/cobra"
+	helmcmd "helm.sh/helm/v4/pkg/cmd"
+
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
 func NewHelmCommand(envConfig map[string]any) *cobra.Command {
 	return &cobra.Command{
-		Use:  "helm",
-		Long: "Run helm commands on the cluster",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return helmCommandHandler(cmd, args)
-		},
+		Use:                "helm",
+		Long:               "Run helm commands on the cluster",
 		DisableFlagParsing: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			c, err := helmcmd.NewRootCmd(os.Stderr, args, helmcmd.SetupLogging)
+			if err != nil {
+				return err
+			}
+			c.SetArgs(args)
+			return c.ExecuteContext(cmd.Context())
+		},
 	}
-}
-
-func helmCommandHandler(command *cobra.Command, args []string) error {
-	ctx := command.Context()
-	cmdArgs := []string{command.Name()}
-	cmdArgs = append(cmdArgs, args...)
-	req, err := prepareBaseContainerEnv(config.IMAGE_NAME, cmdArgs)
-	if err != nil {
-		return err
-	}
-
-	client, err := createContainerRuntimeClient()
-	if err != nil {
-		return err
-	}
-
-	err = containerRun(ctx, client, req)
-	if err != nil {
-		log.Printf("Failed to run container: err: %s", err)
-	}
-
-	return nil
 }

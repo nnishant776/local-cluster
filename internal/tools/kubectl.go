@@ -1,10 +1,8 @@
 package tools
 
 import (
-	"log"
-
-	"github.com/nnishant776/local-cluster/config"
 	"github.com/spf13/cobra"
+	kctlcmd "k8s.io/kubectl/pkg/cmd"
 )
 
 func NewKubectlCommand(envConfig map[string]any) *cobra.Command {
@@ -12,30 +10,10 @@ func NewKubectlCommand(envConfig map[string]any) *cobra.Command {
 		Use:  "kubectl",
 		Long: "Run kubectl commands on the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return helmfileCommandHandler(cmd, args)
+			c := kctlcmd.NewDefaultKubectlCommand()
+			c.SetArgs(args)
+			return c.ExecuteContext(cmd.Context())
 		},
 		DisableFlagParsing: true,
 	}
-}
-
-func kubectlCommandHandler(command *cobra.Command, args []string) error {
-	ctx := command.Context()
-	cmdArgs := []string{command.Name()}
-	cmdArgs = append(cmdArgs, args...)
-	req, err := prepareBaseContainerEnv(config.IMAGE_NAME, cmdArgs)
-	if err != nil {
-		return err
-	}
-
-	client, err := createContainerRuntimeClient()
-	if err != nil {
-		return err
-	}
-
-	err = containerRun(ctx, client, req)
-	if err != nil {
-		log.Printf("Failed to run container: err: %s", err)
-	}
-
-	return nil
 }

@@ -74,13 +74,13 @@ func toolsCmd() *cobra.Command {
 
 	helmCmd := tools.NewHelmCommand(nil)
 	helmfileCmd := tools.NewHelmfileCommand(nil)
-	shellCmd := tools.NewShellCommand(nil)
 	kubectlCmd := tools.NewKubectlCommand(nil)
+	k9sCmd := tools.NewK9SCommand(nil)
 
 	toolCmd.AddCommand(helmCmd)
 	toolCmd.AddCommand(helmfileCmd)
-	toolCmd.AddCommand(shellCmd)
 	toolCmd.AddCommand(kubectlCmd)
+	toolCmd.AddCommand(k9sCmd)
 
 	return toolCmd
 }
