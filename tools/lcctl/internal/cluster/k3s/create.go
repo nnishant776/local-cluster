@@ -16,17 +16,6 @@ func k3sCreateCommand(_ *k3s.ClusterConfig) *cobra.Command {
 		Short: "Create the cluster",
 		Long:  "Create the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Extract the config file path
-			// configPath := ""
-			// if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
-			// 	configPath = clusterCfg.Value.String()
-			// } else {
-			// 	return errstk.New(
-			// 		errors.New("cluster configuration file not found"),
-			// 		errstk.WithTraceback(),
-			// 	)
-			// }
-
 			// Define the command
 			proc := exec.CommandContext(cmd.Context(), "k3s", "server", "--config", "cluster/config.yaml")
 
@@ -44,9 +33,6 @@ func k3sCreateCommand(_ *k3s.ClusterConfig) *cobra.Command {
 			return nil
 		},
 	}
-
-	// createFlags := createCmd.Flags()
-	// createFlags.StringP("cluster-config", "c", "cluster/config.yaml", "--cluster-config <filename>")
 
 	return createCmd
 }
