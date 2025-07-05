@@ -86,8 +86,25 @@ endif
 
 .PHONY: build
 
-build:
-	go build -v -ldflags "-s -w" -o bin/lcctl github.com/nnishant776/local-cluster/cmd/lcctl
+.deps:
+	git submodule sync --recursive && cd k8s/runtimes/k3s && make ci && touch ../../../.deps
+
+deps: .deps
+
+build: container:=false
+build: runtime:=podman
+build: cmd:=$(runtime) run \
+	--rm -it \
+	-v $$(dirname $$(realpath Makefile)):$$(dirname $$(realpath Makefile))	\
+	--security-opt seccomp=unconfined \
+	--security-opt label=disable \
+	-w $$(dirname $$(realpath Makefile)) \
+	golang:latest
+build: deps
+ifeq ($(container),true)
+	$(eval build: cmd:=)
+endif
+	$(cmd) go build -v -ldflags "-s -w" -o bin/lcctl github.com/nnishant776/local-cluster/cmd/lcctl
 
 install:
 	if [ $$(id -u) != 0 ]; then \

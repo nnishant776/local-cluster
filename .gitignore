@@ -6,3 +6,5 @@
 *.tgz
 *.lock
 /cluster/config.yaml
+/.deps
+/bin
