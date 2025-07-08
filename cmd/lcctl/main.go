@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"embed"
-	"errors"
 	"fmt"
 	"os"
 	"os/signal"
@@ -41,9 +40,10 @@ func newCLICmds() *cobra.Command {
 
 func rootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:   "lcctl",
-		Short: "lcctl is a tool controlling the ocal cluster deployment",
-		Long:  "lcctl is a tool controlling the local cluster deployment",
+		Use:              "lcctl",
+		Short:            "lcctl is a tool controlling the ocal cluster deployment",
+		Long:             "lcctl is a tool controlling the local cluster deployment",
+		TraverseChildren: true,
 		CompletionOptions: cobra.CompletionOptions{
 			DisableDefaultCmd:   true,
 			DisableNoDescFlag:   false,
@@ -53,13 +53,10 @@ func rootCmd() *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().String(
-		"deploy-config", "config.yaml", "--deploy-config <filename>",
-	)
-	rootCmd.PersistentFlags().String(
-		"cluster-config", "cluster/config.yaml", "--cluster-config <filename>",
+		"deploy-config", "config.yaml", "Deployment configuration file path",
 	)
 	rootCmd.PersistentFlags().Bool(
-		"verbose", false, "--verbose",
+		"verbose", false, "Print verbose errors",
 	)
 
 	return rootCmd
@@ -67,9 +64,10 @@ func rootCmd() *cobra.Command {
 
 func toolsCmd() *cobra.Command {
 	toolCmd := &cobra.Command{
-		Use:   "tools",
-		Short: "A collection of tools to help with cluster management",
-		Long:  "A collection of tools to help with cluster management",
+		Use:              "tools",
+		Short:            "A collection of tools to help with cluster management",
+		Long:             "A collection of tools to help with cluster management",
+		TraverseChildren: true,
 	}
 
 	helmCmd := tools.NewHelmCommand(nil)
@@ -86,89 +84,67 @@ func toolsCmd() *cobra.Command {
 }
 
 func clusterCmd() *cobra.Command {
-	clusterCmdsAdded := false
-
 	rootCmd := &cobra.Command{
-		Use:   "cluster",
-		Short: "Commands for cluster operation",
-		Long:  "Commands for cluster operation",
-		PreRunE: func(cmd *cobra.Command, _ []string) error {
-			if clusterCmdsAdded {
-				return nil
+		Use:                "cluster",
+		Short:              "Commands for cluster operation",
+		Long:               "Commands for cluster operation",
+		TraverseChildren:   true,
+		DisableFlagParsing: true,
+		CompletionOptions: cobra.CompletionOptions{
+			DisableDefaultCmd:   true,
+			DisableNoDescFlag:   false,
+			DisableDescriptions: false,
+			HiddenDefaultCmd:    false,
+		},
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			// Extract the config file path
+			configPath := ""
+			if deployConfig := cmd.Flag("deploy-config"); deployConfig != nil {
+				configPath = deployConfig.Value.String()
+			} else {
+				return errstk.NewString("cluster: deployment config not found", errstk.WithStack())
 			}
-			clusterCmdsAdded = true
-			return addClusterSubcommands(cmd)
+
+			cfg, err := config.Parse(configPath)
+			if err != nil {
+				return errstk.NewChainString(
+					"cluster: command failed", errstk.WithStack(),
+				).Chain(err)
+			}
+
+			switch cfg.Deployment.Environment {
+			case model.K3D:
+				if k3dClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3d.ClusterConfig); ok {
+					cmd.AddCommand(k3dc.NewK3DClusterCommand(k3dClusterCfg).Commands()...)
+				} else {
+					return errstk.NewString(
+						"invalid configuration: expected a k3d configuration", errstk.WithStack(),
+					)
+				}
+
+			case model.K3S:
+				if k3sClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3s.ClusterConfig); ok {
+					cmd.AddCommand(k3sc.NewK3SClusterCommand(k3sClusterCfg).Commands()...)
+				} else {
+					return errstk.NewString(
+						"invalid configuration: expected a k3s configuration", errstk.WithStack(),
+					)
+				}
+			}
+
+			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cmd.RunE = nil
-			cmd.PreRunE = nil
-
-			if len(args) == 0 {
-				return cmd.Help()
-			}
-
+			cmd.RunE, cmd.PreRunE = nil, nil
 			return cmd.Execute()
 		},
 	}
 
-	rootCmd.SetHelpFunc(func(c *cobra.Command, s []string) {
-		if !clusterCmdsAdded {
-			clusterCmdsAdded = true
-			addClusterSubcommands(c)
-		}
-
-		c.SetHelpFunc(nil)
-		c.RunE = nil
-		c.PreRunE = nil
-		c.Execute()
-	})
+	rootCmd.PersistentFlags().String(
+		"cluster-config", "cluster/config.yaml", "Cluster configuration file path",
+	)
 
 	return rootCmd
-
-}
-
-func addClusterSubcommands(cmd *cobra.Command) error {
-	// Extract the config file path
-	configPath := ""
-	if clusterCfg := cmd.Flag("deploy-config"); clusterCfg != nil {
-		configPath = clusterCfg.Value.String()
-	} else {
-		return errstk.New(
-			errors.New("deployment config not found"),
-			errstk.WithStack(),
-		)
-	}
-
-	cfg, err := config.Parse(configPath)
-	if err != nil {
-		return err
-	}
-
-	switch cfg.Deployment.Environment {
-	case model.K3D:
-		if k3dClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3d.ClusterConfig); !ok {
-			return errstk.New(
-				errors.New("invalid configuration: expected a k3d configuration"),
-				errstk.WithStack(),
-			)
-		} else {
-			k3dCmd := k3dc.NewK3DClusterCommand(k3dClusterCfg)
-			cmd.AddCommand(k3dCmd.Commands()...)
-		}
-
-	case model.K3S:
-		if k3sClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3s.ClusterConfig); !ok {
-			return errstk.New(
-				errors.New("invalid configuration: expected a k3s configuration"),
-				errstk.WithStack(),
-			)
-		} else {
-			k3sCmd := k3sc.NewK3SClusterCommand(k3sClusterCfg)
-			cmd.AddCommand(k3sCmd.Commands()...)
-		}
-	}
-
-	return nil
 }
 
 func main() {
@@ -177,7 +153,7 @@ func main() {
 
 	cmd := newCLICmds()
 	err := cmd.ExecuteContext(ctx)
-	if err != nil && cmd.Flags().Lookup("verbose").Value.String() == "true" {
+	if flg := cmd.Flag("verbose"); err != nil && flg != nil && flg.Value.String() == "true" {
 		fmt.Printf("Failed to execute command: %#4v\n", err)
 	}
 }

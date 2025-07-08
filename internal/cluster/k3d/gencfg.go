@@ -1,16 +1,14 @@
 package k3d
 
 import (
-	// "errors"
-	// "fmt"
-	// "io"
-	// "os"
-	// "path/filepath"
+	"os"
+	"path/filepath"
 
 	errstk "github.com/nnishant776/errstack"
 	"github.com/nnishant776/local-cluster/internal/tools"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3d"
 	"github.com/spf13/cobra"
+	"golang.org/x/sys/unix"
 )
 
 func k3dGencfgCommand(_ *k3d.ClusterConfig) *cobra.Command {
@@ -20,15 +18,30 @@ func k3dGencfgCommand(_ *k3d.ClusterConfig) *cobra.Command {
 		Long:  "Generate the cluster configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Extract the config file path
-			// outputPath := ""
-			// if clusterCfg := cmd.Flag("output-path"); clusterCfg != nil {
-			// 	outputPath = clusterCfg.Value.String()
-			// } else {
-			// 	return errstk.New(
-			// 		errors.New("cluster configuration file not found"),
-			// 		errstk.WithTraceback(),
-			// 	)
-			// }
+			outputPath := ""
+			if outPathFlag := cmd.Flag("output-path"); outPathFlag != nil {
+				outputPath = outPathFlag.Value.String()
+				if outputPath == "" {
+					if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
+						outputPath = clusterCfg.Value.String()
+					}
+				}
+			}
+
+			if err := os.MkdirAll(filepath.Dir(outputPath), 0o755); err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
+
+			dst, err := os.Create(outputPath)
+			if err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
+			defer dst.Close()
+
+			err = unix.Dup2(int(dst.Fd()), int(os.Stdout.Fd()))
+			if err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
 
 			// Generate k3d configuration before creating the cluster
 			helmfileCmd := tools.NewHelmfileCommand(nil)
@@ -43,33 +56,15 @@ func k3dGencfgCommand(_ *k3d.ClusterConfig) *cobra.Command {
 				return errstk.New(err, errstk.WithStack())
 			}
 
-			// if outputPath != "cluster/config.yaml" {
-			// 	fmt.Printf("Copying cluster configuartion to destination: '%s'", outputPath)
-			// 	src, err := os.Open("cluster/config.yaml")
-			// 	if err != nil {
-			// 		return errstk.New(err, errstk.WithTraceback())
-			// 	}
-			//
-			// 	if err := os.MkdirAll(filepath.Dir(outputPath), 0o755); err != nil {
-			// 		return errstk.New(err, errstk.WithTraceback())
-			// 	}
-			//
-			// 	dst, err := os.OpenFile(outputPath, os.O_RDWR, 0o644)
-			// 	if err != nil {
-			// 		return errstk.New(err, errstk.WithTraceback())
-			// 	}
-			//
-			// 	if _, err := io.Copy(dst, src); err != nil {
-			// 		return errstk.New(err, errstk.WithTraceback())
-			// 	}
-			// }
-
 			return nil
 		},
 	}
 
-	// gencfgFlags := gencfgCmd.Flags()
-	// gencfgFlags.StringP("output-path", "o", "cluster/config.yaml", "--output-path <filename>")
+	gencfgCmd.Flags().StringP(
+		"output-path", "o",
+		"cluster/config.yaml",
+		"Output path for the generate configuration",
+	)
 
 	return gencfgCmd
 }

@@ -146,6 +146,3 @@ releases:
     values:
       - config.yaml
       - environments/{{ .Environment.Name }}.yaml
-    postRenderer: tee
-    postRendererArgs:
-      - cluster/config.yaml

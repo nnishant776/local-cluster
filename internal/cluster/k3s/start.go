@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func k3sStartCommand(cfg *k3s.ClusterConfig) *cobra.Command {
+func k3sStartCommand(_ *k3s.ClusterConfig) *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start the cluster",
@@ -22,6 +22,12 @@ func k3sStartCommand(cfg *k3s.ClusterConfig) *cobra.Command {
 			}
 
 			newArgs := []string{"server"}
+			if agentFlag := cmd.Flag("agent"); agentFlag != nil {
+				if agentFlag.Value.String() == "true" {
+					newArgs = []string{"agent"}
+				}
+			}
+
 			if len(args) <= 0 {
 				newArgs = append(newArgs, "--config", configPath)
 			} else {
@@ -43,6 +49,12 @@ func k3sStartCommand(cfg *k3s.ClusterConfig) *cobra.Command {
 			return nil
 		},
 	}
+
+	startCmd.Flags().Bool(
+		"agent",
+		false,
+		"Specify if agent should be created instead of a server",
+	)
 
 	return startCmd
 }
