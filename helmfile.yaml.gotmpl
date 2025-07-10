@@ -1,19 +1,19 @@
 environments:
   default:
     values:
-      - config.yaml
+      - {{ .StateValues | getOrNil "deploy-config" | default "config.yaml" }}
       - values.yaml
       - secrets.yaml
       - environments/k3d.yaml
   k3d:
     values:
-      - config.yaml
+      - {{ .StateValues | getOrNil "deploy-config" | default "config.yaml" }}
       - values.yaml
       - secrets.yaml
       - environments/k3d.yaml
   k3s:
     values:
-      - config.yaml
+      - {{ .StateValues | getOrNil "deploy-config" | default "config.yaml" }}
       - values.yaml
       - secrets.yaml
       - environments/k3s.yaml
@@ -144,5 +144,5 @@ releases:
     chart: cluster/{{ .Environment.Name }}
     version: 0.1.0
     values:
-      - config.yaml
+      - {{ .StateValues | getOrNil "deploy-config" | default "config.yaml" }}
       - environments/{{ .Environment.Name }}.yaml
