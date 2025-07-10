@@ -66,10 +66,9 @@ func rootCmd() *cobra.Command {
 
 func toolsCmd() *cobra.Command {
 	toolCmd := &cobra.Command{
-		Use:              "tools",
-		Short:            "A collection of tools to help with cluster management",
-		Long:             "A collection of tools to help with cluster management",
-		TraverseChildren: true,
+		Use:   "tools",
+		Short: "A collection of tools to help with cluster management",
+		Long:  "A collection of tools to help with cluster management",
 	}
 
 	helmCmd := tools.NewHelmCommand(nil)
@@ -90,7 +89,6 @@ func clusterCmd() *cobra.Command {
 		Use:                "cluster",
 		Short:              "Commands for cluster operation",
 		Long:               "Commands for cluster operation",
-		TraverseChildren:   true,
 		DisableFlagParsing: true,
 		CompletionOptions: cobra.CompletionOptions{
 			DisableDefaultCmd:   true,
