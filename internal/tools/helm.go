@@ -19,6 +19,9 @@ func NewHelmCommand(envConfig map[string]any) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if v := cmd.Flag("verbose"); v != nil && v.Value.String() == "true" {
+				args = append(args, "--debug")
+			}
 			c.SetArgs(args)
 			return c.ExecuteContext(cmd.Context())
 		},

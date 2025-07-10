@@ -13,7 +13,6 @@ func NewK3SClusterCommand(cfg *k3s.ClusterConfig) *cobra.Command {
 	}
 
 	rootCmd.AddCommand(k3sStartCommand(cfg))
-	// rootCmd.AddCommand(k3sStopCommand(cfg))
 	rootCmd.AddCommand(k3sGencfgCommand(cfg))
 
 	return rootCmd
