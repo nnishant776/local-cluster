@@ -5,6 +5,7 @@ go 1.24.2
 toolchain go1.24.4
 
 require (
+	dario.cat/mergo v1.0.2
 	github.com/derailed/k9s v0.50.4
 	github.com/helmfile/helmfile v1.1.2
 	github.com/k3d-io/k3d/v5 v5.8.3
@@ -31,7 +32,6 @@ require (
 	cloud.google.com/go/monitoring v1.24.2 // indirect
 	cloud.google.com/go/secretmanager v1.14.7 // indirect
 	cloud.google.com/go/storage v1.55.0 // indirect
-	dario.cat/mergo v1.0.2 // indirect
 	filippo.io/age v1.2.1 // indirect
 	github.com/1Password/connect-sdk-go v1.5.3 // indirect
 	github.com/1password/onepassword-sdk-go v0.3.0 // indirect

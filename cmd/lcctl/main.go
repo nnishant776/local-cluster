@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 
+	"dario.cat/mergo"
 	"github.com/nnishant776/local-cluster/config"
 	k3dc "github.com/nnishant776/local-cluster/internal/cluster/k3d"
 	k3sc "github.com/nnishant776/local-cluster/internal/cluster/k3s"
@@ -14,6 +15,7 @@ import (
 	"github.com/nnishant776/local-cluster/pkg/model"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3d"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3s"
+	"gopkg.in/yaml.v3"
 
 	errstk "github.com/nnishant776/errstack"
 	"github.com/spf13/cobra"
@@ -105,6 +107,19 @@ func clusterCmd() *cobra.Command {
 				return errstk.NewString("cluster: deployment config not found", errstk.WithStack())
 			}
 
+			rawConfig := map[string]any{}
+
+			if b, err := os.ReadFile(configPath); err != nil {
+				return errstk.New(err, errstk.WithStack())
+			} else {
+				err = yaml.Unmarshal(b, &rawConfig)
+				if err != nil {
+					return errstk.NewChainString(
+						"yaml: failed to decode cluster config", errstk.WithStack(),
+					).Chain(err)
+				}
+			}
+
 			cfg, err := config.Parse(configPath)
 			if err != nil {
 				return errstk.NewChainString(
@@ -116,6 +131,31 @@ func clusterCmd() *cobra.Command {
 			case model.K3D:
 				if k3dClusterCfg, ok := cfg.Deployment.ClusterConfig.(*k3d.ClusterConfig); ok {
 					cmd.AddCommand(k3dc.NewK3DClusterCommand(k3dClusterCfg).Commands()...)
+					if err := mergo.MergeWithOverwrite(
+						&rawConfig,
+						map[string]any{
+							"deployment": map[string]any{
+								"cluster": map[string]any{
+									"k8sVersion": config.K8S_VERSION + "-k3s1",
+								},
+							},
+						},
+					); err != nil {
+						return errstk.NewChainString(
+							"merge: failed to merge k8s config", errstk.WithStack(),
+						).Chain(err)
+					} else {
+						if buf, err := yaml.Marshal(rawConfig); err != nil {
+							return errstk.NewChainString(
+								"yaml: failed to write updated config", errstk.WithStack(),
+							).Chain(err)
+						} else {
+							err = os.WriteFile(configPath, buf, 0o644)
+							if err != nil {
+								return errstk.New(err, errstk.WithStack())
+							}
+						}
+					}
 				} else {
 					return errstk.NewString(
 						"invalid configuration: expected a k3d configuration", errstk.WithStack(),
