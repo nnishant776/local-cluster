@@ -170,6 +170,8 @@ func clusterCmd() *cobra.Command {
 				}
 			}
 
+			cmd.ParseFlags(args)
+
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
