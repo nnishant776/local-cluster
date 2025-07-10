@@ -12,10 +12,10 @@ func NewK3DClusterCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 		Long:  "Commands for cluster operation",
 	}
 
-	rootCmd.AddCommand(k3dStartCommand(cfg))
-	rootCmd.AddCommand(k3dStopCommand(cfg))
-	rootCmd.AddCommand(k3dDestroyCommand(cfg))
-	rootCmd.AddCommand(k3dGencfgCommand(cfg))
+	rootCmd.AddCommand(NewStartCommand(cfg))
+	rootCmd.AddCommand(NewStopCommand(cfg))
+	rootCmd.AddCommand(NewDestroyCommand(cfg))
+	rootCmd.AddCommand(NewGencfgCommand(cfg))
 
 	return rootCmd
 }

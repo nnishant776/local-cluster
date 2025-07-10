@@ -11,7 +11,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func k3sGencfgCommand(_ *k3s.ClusterConfig) *cobra.Command {
+func NewGencfgCommand(_ *k3s.ClusterConfig) *cobra.Command {
 	gencfgCmd := &cobra.Command{
 		Use:   "gencfg",
 		Short: "Generate the cluster configuration",

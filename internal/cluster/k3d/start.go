@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func k3dStartCommand(cfg *k3d.ClusterConfig) *cobra.Command {
+func NewStartCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start the cluster",

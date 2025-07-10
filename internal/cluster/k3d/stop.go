@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func k3dStopCommand(cfg *k3d.ClusterConfig) *cobra.Command {
+func NewStopCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 	k3dCmd := k3dcluster.NewCmdClusterStop()
 	stopCmd := &cobra.Command{
 		Use:   "stop",

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func k3dDestroyCommand(cfg *k3d.ClusterConfig) *cobra.Command {
+func NewDestroyCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 	k3dCmd := k3dcluster.NewCmdClusterDelete()
 	destroyCmd := &cobra.Command{
 		Use:   "destroy",
