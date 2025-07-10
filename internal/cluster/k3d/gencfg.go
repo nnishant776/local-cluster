@@ -45,13 +45,20 @@ func k3dGencfgCommand(_ *k3d.ClusterConfig) *cobra.Command {
 
 			// Generate k3d configuration before creating the cluster
 			helmfileCmd := tools.NewHelmfileCommand(nil)
-			helmfileCmd.SetArgs([]string{
+			cmdArgs := []string{
 				"--environment", "k3d",
 				"template",
 				"-l", "name=cluster",
 				"--disable-force-update",
 				"--state-values-set", "installed=true",
-			})
+			}
+			if deployCfg := cmd.Flag("deploy-config"); deployCfg != nil {
+				cmdArgs = append(cmdArgs, "--state-values-set", "deploy-config="+deployCfg.Value.String())
+			}
+			if v := cmd.Flag("verbose"); v != nil && v.Value.String() == "true" {
+				cmdArgs = append(cmdArgs, "--debug")
+			}
+			helmfileCmd.SetArgs(cmdArgs)
 			if err := helmfileCmd.ExecuteContext(cmd.Context()); err != nil {
 				return errstk.New(err, errstk.WithStack())
 			}
