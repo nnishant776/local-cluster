@@ -1,10 +1,11 @@
 package tools
 
 import (
-	"github.com/spf13/cobra"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/spf13/cobra"
 
 	"github.com/helmfile/helmfile/cmd"
 	"github.com/helmfile/helmfile/pkg/app"
@@ -20,8 +21,10 @@ func NewHelmfileCommand(envConfig map[string]any) *cobra.Command {
 		RunE: func(c *cobra.Command, args []string) error {
 			sig, sigs, errChan := (os.Signal)(nil), make(chan os.Signal, 1), make(chan error, 1)
 
+			os.Setenv("TOOL_MODE", "helm")
 			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 			rootCmd, err := cmd.NewRootCmd(&helmfilecfg.GlobalOptions{})
+			args = append([]string{"--helm-binary", os.Args[0]}, args...)
 			rootCmd.SetArgs(args)
 
 			go func() {

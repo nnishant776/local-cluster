@@ -192,6 +192,17 @@ func main() {
 	defer cancelFn()
 
 	cmd := newCLICmds()
+	switch os.Getenv("TOOL_MODE") {
+	case "helm":
+		cmd = tools.NewHelmCommand(nil)
+	case "helmfile":
+		cmd = tools.NewHelmfileCommand(nil)
+	case "k9s":
+		cmd = tools.NewK9SCommand(nil)
+	case "kubectl":
+		cmd = tools.NewKubectlCommand(nil)
+	}
+
 	err := cmd.ExecuteContext(ctx)
 	if flg := cmd.Flag("verbose"); err != nil && flg != nil && flg.Value.String() == "true" {
 		fmt.Printf("Failed to execute command: %#4v\n", err)
