@@ -1,40 +1,31 @@
-infra:
-  rootDomain: &san local.cluster.dev
-  tls:
-    privateCA:
-      countryCode: UC
-      state: Andromeda
-      locality: Mirach
-      commonName: universe.com
-      organization: Constellation
-      organizationUnit: Development
-      emailAddress: mail@universe.com
 deployment:
-  environment: k3s     # k3d, k3s
-  cluster:             # Values for cluster should reflect based on environment
-    name: docker-k3s
-    k8sVersion: v1.30.6-k3s1
-    dataPath:
-      host: /mnt
-      cluster: /mnt
-    volumeMounts: []
-    services:
-      loadBalancer: false
-      ingressController: false
-      metricsServer: false
-      storageProvisioner: false
+  cluster:
     bootstrap:
       dns: true
+    dataPath:
+      cluster: /mnt
+      host: /mnt
+    k8sVersion: v1.33.1-k3s1
+    name: docker-k3s
     registry:
       enabled: true
       mirror:
         endpoints: []
-          # - host: "registry.local.cluster.dev:5000"
-          #   auth:
-          #     username:  # username
-          #     password:  # password
-          #   tls:
-          #     enabled: false
-          #     cert_file: # path to the cert file used in the registry
-          #     key_file:  # path to the key file used in the registry
-          #     ca_file:   # path to the ca file used in the registry
+    services:
+      ingressController: false
+      loadBalancer: false
+      metricsServer: false
+      storageProvisioner: false
+    volumeMounts: []
+  environment: k3d
+infra:
+  rootDomain: local.cluster.dev
+  tls:
+    privateCA:
+      commonName: universe.com
+      countryCode: UC
+      emailAddress: mail@universe.com
+      locality: Mirach
+      organization: Constellation
+      organizationUnit: Development
+      state: Andromeda

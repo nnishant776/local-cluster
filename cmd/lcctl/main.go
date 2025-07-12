@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"embed"
 	"fmt"
+	"io"
 	"os"
 	"os/signal"
 
@@ -105,24 +107,26 @@ func clusterCmd() *cobra.Command {
 				return errstk.NewString("cluster: deployment config not found", errstk.WithStack())
 			}
 
-			rawConfig := map[string]any{}
+			rawConfig, cfg := map[string]any{}, (*model.Config)(nil)
 
-			if b, err := os.ReadFile(configPath); err != nil {
+			if f, err := os.Open(configPath); err != nil {
 				return errstk.New(err, errstk.WithStack())
 			} else {
-				err = yaml.Unmarshal(b, &rawConfig)
+				defer f.Close()
+				err = yaml.NewDecoder(f).Decode(&rawConfig)
 				if err != nil {
 					return errstk.NewChainString(
 						"yaml: failed to decode cluster config", errstk.WithStack(),
 					).Chain(err)
 				}
-			}
 
-			cfg, err := config.Parse(configPath)
-			if err != nil {
-				return errstk.NewChainString(
-					"cluster: command failed", errstk.WithStack(),
-				).Chain(err)
+				f.Seek(0, io.SeekStart)
+				cfg, err = config.ParseStream(f)
+				if err != nil {
+					return errstk.NewChainString(
+						"cluster: command failed", errstk.WithStack(),
+					).Chain(err)
+				}
 			}
 
 			switch cfg.Deployment.Environment {
@@ -143,12 +147,15 @@ func clusterCmd() *cobra.Command {
 							"merge: failed to merge k8s config", errstk.WithStack(),
 						).Chain(err)
 					} else {
-						if buf, err := yaml.Marshal(rawConfig); err != nil {
+						buf := bytes.Buffer{}
+						yamlEnc := yaml.NewEncoder(&buf)
+						yamlEnc.SetIndent(2)
+						if err := yamlEnc.Encode(rawConfig); err != nil {
 							return errstk.NewChainString(
 								"yaml: failed to write updated config", errstk.WithStack(),
 							).Chain(err)
 						} else {
-							err = os.WriteFile(configPath, buf, 0o644)
+							err = os.WriteFile(configPath, buf.Bytes(), 0o644)
 							if err != nil {
 								return errstk.New(err, errstk.WithStack())
 							}
