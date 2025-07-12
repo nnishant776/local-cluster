@@ -7,14 +7,14 @@ toolchain go1.24.4
 require (
 	dario.cat/mergo v1.0.2
 	github.com/derailed/k9s v0.50.4
-	github.com/helmfile/helmfile v1.1.2
+	github.com/helmfile/helmfile v0.0.0-00010101000000-000000000000
 	github.com/k3d-io/k3d/v5 v5.8.3
 	github.com/nnishant776/errstack v0.0.7
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sys v0.33.0
+	golang.org/x/sys v0.34.0
 	gopkg.in/yaml.v3 v3.0.1
-	helm.sh/helm/v4 v4.0.0-20250705002123-edd0dabe024c
+	helm.sh/helm/v4 v4.0.0-20250710163143-091f9a24fe01
 	k8s.io/client-go v0.33.2
 	k8s.io/kubectl v0.33.2
 )
@@ -270,11 +270,11 @@ require (
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.23.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/hashicorp/hcp-sdk-go v0.144.0 // indirect
 	github.com/hashicorp/jsonapi v1.3.1 // indirect
 	github.com/hashicorp/vault/api v1.16.0 // indirect
-	github.com/helmfile/chartify v0.24.3 // indirect
+	github.com/helmfile/chartify v0.24.6 // indirect
 	github.com/helmfile/vals v0.41.2 // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
@@ -465,9 +465,9 @@ require (
 	golang.org/x/mod v0.25.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.15.0 // indirect
-	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
+	golang.org/x/sync v0.16.0 // indirect
+	golang.org/x/term v0.33.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
@@ -484,7 +484,7 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/gorm v1.30.0 // indirect
-	helm.sh/helm/v3 v3.18.3 // indirect
+	helm.sh/helm/v3 v3.18.4 // indirect
 	k8s.io/api v0.33.2 // indirect
 	k8s.io/apiextensions-apiserver v0.33.2 // indirect
 	k8s.io/apimachinery v0.33.2 // indirect
@@ -510,3 +510,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
 	sigs.k8s.io/yaml v1.5.0 // indirect
 )
+
+replace github.com/helmfile/helmfile => github.com/nnishant776/helmfile v1.2.0-rc-helm-native.0

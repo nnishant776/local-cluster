@@ -5,6 +5,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/nnishant776/errstack"
 	"github.com/spf13/cobra"
 
 	"github.com/helmfile/helmfile/cmd"
@@ -20,11 +21,14 @@ func NewHelmfileCommand(envConfig map[string]any) *cobra.Command {
 		DisableFlagParsing: true,
 		RunE: func(c *cobra.Command, args []string) error {
 			sig, sigs, errChan := (os.Signal)(nil), make(chan os.Signal, 1), make(chan error, 1)
-
-			os.Setenv("TOOL_MODE", "helm")
 			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 			rootCmd, err := cmd.NewRootCmd(&helmfilecfg.GlobalOptions{})
-			args = append([]string{"--helm-binary", os.Args[0]}, args...)
+			if err != nil {
+				return errstack.NewChainString(
+					"helmfile: failed to instantiate", errstack.WithStack(),
+				).Chain(err)
+			}
+
 			rootCmd.SetArgs(args)
 
 			go func() {
