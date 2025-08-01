@@ -20,28 +20,26 @@ func NewHelmfileCommand(envConfig map[string]any) *cobra.Command {
 		Long:               "Run helmfile commands on the cluster",
 		DisableFlagParsing: true,
 		RunE: func(c *cobra.Command, args []string) error {
-			sig, sigs, errChan := (os.Signal)(nil), make(chan os.Signal, 1), make(chan error, 1)
+			sigs, errChan := make(chan os.Signal, 1), make(chan error, 1)
 			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-			rootCmd, err := cmd.NewRootCmd(&helmfilecfg.GlobalOptions{})
-			if err != nil {
-				return errstack.NewChainString(
-					"helmfile: failed to instantiate", errstack.WithStack(),
-				).Chain(err)
-			}
-
-			rootCmd.SetArgs(args)
 
 			go func() {
+				rootCmd, err := cmd.NewRootCmd(&helmfilecfg.GlobalOptions{})
 				if err != nil {
-					errChan <- err
+					errChan <- errstack.NewChainString(
+						"helmfile: failed to instantiate", errstack.WithStack(),
+					).Chain(err)
+
 					return
 				}
+
+				rootCmd.SetArgs(args)
 
 				errChan <- rootCmd.Execute()
 			}()
 
 			select {
-			case sig = <-sigs:
+			case sig := <-sigs:
 				if sig != nil {
 					app.Cancel()
 					app.CleanWaitGroup.Wait()
