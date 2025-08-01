@@ -7,7 +7,7 @@ toolchain go1.24.4
 require (
 	dario.cat/mergo v1.0.2
 	github.com/derailed/k9s v0.50.4
-	github.com/helmfile/helmfile v0.0.0-00010101000000-000000000000
+	github.com/helmfile/helmfile v1.1.3
 	github.com/k3d-io/k3d/v5 v5.8.3
 	github.com/nnishant776/errstack v0.0.7
 	github.com/spf13/cobra v1.9.1
