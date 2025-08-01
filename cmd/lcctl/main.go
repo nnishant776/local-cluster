@@ -11,6 +11,7 @@ import (
 
 	"dario.cat/mergo"
 	"github.com/nnishant776/local-cluster/config"
+	"github.com/nnishant776/local-cluster/internal/apps"
 	k3dc "github.com/nnishant776/local-cluster/internal/cluster/k3d"
 	k3sc "github.com/nnishant776/local-cluster/internal/cluster/k3s"
 	"github.com/nnishant776/local-cluster/internal/tools"
@@ -39,6 +40,7 @@ func newCLICmds() *cobra.Command {
 	rootCmd := rootCmd()
 	rootCmd.AddCommand(toolsCmd())
 	rootCmd.AddCommand(clusterCmd())
+	rootCmd.AddCommand(appsCmd())
 	return rootCmd
 }
 
@@ -190,6 +192,26 @@ func clusterCmd() *cobra.Command {
 	rootCmd.PersistentFlags().String(
 		"cluster-config", "cluster/config.yaml", "Cluster configuration file path",
 	)
+
+	return rootCmd
+}
+
+func appsCmd() *cobra.Command {
+	rootCmd := &cobra.Command{
+		Use:              "apps",
+		Short:            "Manage applications in cluster",
+		Long:             "Manage applications in cluster",
+		TraverseChildren: true,
+	}
+
+	rootCmd.AddCommand(
+		apps.NewInstallCommand(),
+		apps.NewUninstallCommand(),
+		apps.NewListCommand(),
+		apps.NewTemplateCommand(),
+	)
+
+	rootCmd.PersistentFlags().StringP("name", "n", "", "Specify the specific name of the application")
 
 	return rootCmd
 }
