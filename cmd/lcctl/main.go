@@ -140,7 +140,7 @@ func clusterCmd() *cobra.Command {
 						map[string]any{
 							"deployment": map[string]any{
 								"cluster": map[string]any{
-									"k8sVersion": config.K8S_VERSION + "-k3s1",
+									"k8sVersion": config.GetK8SVersion() + "-k3s1",
 								},
 							},
 						},
