@@ -15,7 +15,7 @@ deployment:
       ingressController: false
       loadBalancer: false
       metricsServer: false
-      storageProvisioner: false
+      storageProvisioner: true
     volumeMounts: []
   environment: k3d
 infra:
