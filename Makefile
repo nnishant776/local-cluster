@@ -104,7 +104,9 @@ build: deps
 ifeq ($(container),true)
 	$(eval build: cmd:=)
 endif
-	$(cmd) go build -v -ldflags "-s -w" -o bin/lcctl github.com/nnishant776/local-cluster/cmd/lcctl
+	$(cmd) go build -v \
+		-ldflags "-s -w -X 'github.com/nnishant776/local-cluster/config.k8sVersion=v1.33.1' -X 'k8s.io/component-base/version.gitVersion=v1.33.1' -X 'helm.sh/helm/v4/pkg/chart/v2/util.k8sVersionMinor=33'" \
+		-o bin/lcctl github.com/nnishant776/local-cluster/cmd/lcctl
 
 install:
 	if [ $$(id -u) != 0 ]; then \
