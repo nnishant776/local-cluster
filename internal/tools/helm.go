@@ -15,7 +15,7 @@ func NewHelmCommand(envConfig map[string]any) *cobra.Command {
 		Long:               "Run helm commands on the cluster",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := helmcmd.NewRootCmd(os.Stderr, args, helmcmd.SetupLogging)
+			c, err := helmcmd.NewRootCmd(os.Stdout, args, helmcmd.SetupLogging)
 			if err != nil {
 				return err
 			}
