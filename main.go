@@ -14,7 +14,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-//go:embed all:deployment all:.devcontainer
+//go:embed all:deployment all:assets
 var bundle embed.FS
 
 func init() {
@@ -25,7 +25,7 @@ func init() {
 	errstk.DefaultChainErrorFormatter = chainFmtter
 }
 
-//go:generate go run ./prebuild.go download --report-progress=true
+//go:generate go run ./prebuild.go download --report-progress=true --path assets
 func main() {
 	ctx, cancelFn := signal.NotifyContext(context.Background(), []os.Signal{unix.SIGTERM, unix.SIGINT}...)
 	defer cancelFn()

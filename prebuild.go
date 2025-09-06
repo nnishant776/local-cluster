@@ -169,7 +169,11 @@ func newDownloadCmd() *cobra.Command {
 
 			// Create the file to download the asset
 			path := cmd.Flag("path").Value.String()
-			file, err := os.Create(filepath.Join(path, "k3s"))
+			err = os.MkdirAll(path, 0o755)
+			if err != nil {
+				return err
+			}
+			file, err := os.OpenFile(filepath.Join(path, "k3s"), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o755)
 			if err != nil {
 				slog.Error("Failed to open file", "name", path, "error", err)
 				return err

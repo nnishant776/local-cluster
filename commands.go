@@ -157,6 +157,8 @@ func installCmd() *cobra.Command {
 		Long:  "Install and setup lcctl",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configDir := utils.GetAppConfigDir()
+			dataDir := utils.GetAppDataDir()
+			installDir := utils.GetInstallDir()
 			_, err := os.Stat(configDir)
 			if err == nil &&
 				cmd.Flag("force").Value.String() != "true" {
@@ -166,22 +168,49 @@ func installCmd() *cobra.Command {
 				)
 			}
 
-			configPath := filepath.Join(configDir, "config.yaml")
-
+			// Clear the existing directory
 			if rmErr := os.RemoveAll(configDir); rmErr != nil {
-				return errstk.New(err, errstk.WithStack())
+				return errstk.New(rmErr, errstk.WithStack())
 			}
 
+			// Copy deployment configuration to correct path
 			configSubtree, err := fs.Sub(bundle, "deployment")
 			if err != nil {
 				return err
 			}
-
 			err = os.CopyFS(configDir, configSubtree)
 			if err != nil {
 				return err
 			}
 
+			// Copy cluster binary to correct path
+			binSubtree, err := fs.Sub(bundle, "assets")
+			if err != nil {
+				return err
+			}
+			binarySourcePath := filepath.Join(dataDir, "bin")
+			err = os.CopyFS(binarySourcePath, binSubtree)
+			if err != nil {
+				return err
+			}
+			fs.WalkDir(binSubtree, ".", func(path string, d fs.DirEntry, err error) error {
+				if err != nil {
+					return err
+				}
+
+				if d.Type().IsDir() {
+					return nil
+				}
+
+				binPath := filepath.Join(binarySourcePath, path)
+				if err := os.Chmod(binPath, 0o755); err != nil {
+					return err
+				}
+
+				return os.Symlink(binPath, filepath.Join(installDir, path))
+			})
+
+			configPath := filepath.Join(configDir, "config.yaml")
 			k8sVersion := config.GetK8SVersion()
 			_, _, err = updateK8SVersionInConfig(k8sVersion, configPath)
 			if err != nil {
@@ -203,6 +232,40 @@ func uninstallCmd() *cobra.Command {
 		Short: "Remove lcctl installation",
 		Long:  "Remove lcctl installation",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			configDir := utils.GetAppConfigDir()
+			dataDir := utils.GetAppDataDir()
+			installDir := utils.GetInstallDir()
+
+			// Clear the existing config directory
+			if rmErr := os.RemoveAll(configDir); rmErr != nil {
+				return errstk.New(rmErr, errstk.WithStack())
+			}
+
+			if cmd.Flag("purge").Value.String() == "true" {
+				// Clear the existing data directory
+				if rmErr := os.RemoveAll(configDir); rmErr != nil {
+					return errstk.New(rmErr, errstk.WithStack())
+				}
+
+				// Clear the binaries from the install dir
+				binSubtree, err := fs.Sub(bundle, "assets")
+				if err != nil {
+					return errstk.New(err, errstk.WithStack())
+				}
+				fs.WalkDir(binSubtree, ".", func(path string, d fs.DirEntry, err error) error {
+					if err != nil {
+						return err
+					}
+
+					if d.Type().IsDir() {
+						return nil
+					}
+
+					return os.Remove(filepath.Join(installDir, path))
+				})
+				return os.RemoveAll(dataDir)
+			}
+
 			return nil
 		},
 	}
