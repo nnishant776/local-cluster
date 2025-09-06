@@ -1,16 +1,17 @@
 deployment:
   cluster:
+    agentArgs: []
     bootstrap:
       dns: true
     dataPath:
       cluster: /mnt
       host: /mnt
-    k8sVersion: v1.33.1-k3s1
     name: docker-k3s
     registry:
       enabled: true
       mirror:
         endpoints: []
+    serverArgs: []
     services:
       ingressController: false
       loadBalancer: false

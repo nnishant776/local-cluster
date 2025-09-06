@@ -9,7 +9,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
-func NewHelmCommand(envConfig map[string]any) *cobra.Command {
+func NewHelmCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:                "helm",
 		Long:               "Run helm commands on the cluster",

@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewK9SCommand(envConfig map[string]any) *cobra.Command {
+func NewK9SCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:                "k9s",
 		Long:               "Run k9s",

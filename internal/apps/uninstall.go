@@ -1,8 +1,11 @@
 package apps
 
 import (
+	"path/filepath"
+
 	"github.com/nnishant776/local-cluster/config"
 	"github.com/nnishant776/local-cluster/internal/tools"
+	"github.com/nnishant776/local-cluster/internal/utils"
 	"github.com/spf13/cobra"
 
 	errstk "github.com/nnishant776/errstack"
@@ -18,10 +21,7 @@ func NewUninstallCommand() *cobra.Command {
 		// },
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Extract the config file path
-			deployConfig := ""
-			if deployCfg := cmd.Flag("deploy-config"); deployCfg != nil {
-				deployConfig = deployCfg.Value.String()
-			}
+			deployConfig := filepath.Join(utils.GetAppConfigDir(), "config.yaml")
 
 			cfg, err := config.Parse(deployConfig)
 			if err != nil {
@@ -30,14 +30,14 @@ func NewUninstallCommand() *cobra.Command {
 				).Chain(err)
 			}
 
-			helmfileCmd := tools.NewHelmfileCommand(nil)
+			helmfileCmd := tools.NewHelmfileCommand()
 
 			// Chart installation args
 			cmdArgs := []string{
+				"-f", filepath.Join(utils.GetAppConfigDir(), "helmfile.yaml.gotmpl"),
 				"--environment", cfg.Deployment.Environment.String(),
 				"destroy",
 				"--disable-force-update",
-				"--state-values-set", "deploy-config=" + deployConfig,
 			}
 
 			// Add name filter if provided

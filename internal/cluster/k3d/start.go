@@ -1,11 +1,14 @@
 package k3d
 
 import (
+	"path/filepath"
+
 	k3dcluster "github.com/k3d-io/k3d/v5/cmd/cluster"
 	k3dclient "github.com/k3d-io/k3d/v5/pkg/client"
 	"github.com/k3d-io/k3d/v5/pkg/runtimes"
 	"github.com/k3d-io/k3d/v5/pkg/types"
 	errstk "github.com/nnishant776/errstack"
+	"github.com/nnishant776/local-cluster/internal/utils"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3d"
 	"github.com/spf13/cobra"
 )
@@ -17,10 +20,7 @@ func NewStartCommand(cfg *k3d.ClusterConfig) *cobra.Command {
 		Long:  "Start the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Extract the config file path
-			configPath := ""
-			if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
-				configPath = clusterCfg.Value.String()
-			}
+			configPath := filepath.Join(utils.GetAppConfigDir(), "cluster", "config.yaml")
 
 			if _, err := k3dclient.ClusterGet(
 				cmd.Context(), runtimes.SelectedRuntime, &types.Cluster{Name: cfg.Name},

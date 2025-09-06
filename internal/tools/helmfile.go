@@ -14,7 +14,7 @@ import (
 	helmfileerr "github.com/helmfile/helmfile/pkg/errors"
 )
 
-func NewHelmfileCommand(envConfig map[string]any) *cobra.Command {
+func NewHelmfileCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:                "helmfile",
 		Long:               "Run helmfile commands on the cluster",

@@ -83,6 +83,11 @@ options:
       - arg: "--tls-san={{ .Values.infra.rootDomain }}"
         nodeFilters:
           - server:*
+      {{- range $arg := .Values.deployment.cluster.serverArgs }}
+      - arg: "--{{ $arg.name }}={{ $arg.value }}"
+        nodeFilters:
+          - server:*
+      {{- end }}
       {{- if not .Values.deployment.cluster.services.ingressController }}
       - arg: "--disable=traefik"
         nodeFilters:

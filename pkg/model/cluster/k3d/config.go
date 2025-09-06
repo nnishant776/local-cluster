@@ -1,6 +1,8 @@
 package k3d
 
-import "github.com/nnishant776/local-cluster/pkg/model/cluster/common"
+import (
+	"github.com/nnishant776/local-cluster/pkg/model/cluster/common"
+)
 
 type NetworkConfig struct {
 	Subnet string `json:"subnet,omitempty"`

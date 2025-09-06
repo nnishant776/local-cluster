@@ -7,7 +7,7 @@ import (
 	kctlcmd "k8s.io/kubectl/pkg/cmd"
 )
 
-func NewKubectlCommand(envConfig map[string]any) *cobra.Command {
+func NewKubectlCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:                "kubectl",
 		Long:               "Run kubectl commands on the cluster",
