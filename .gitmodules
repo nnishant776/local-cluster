@@ -1,3 +1,0 @@
-[submodule "k3s"]
-	path = k8s/runtimes/k3s
-	url = https://github.com/k3s-io/k3s
