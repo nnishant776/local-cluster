@@ -1,12 +1,15 @@
 package config
 
 import (
-	"cmp"
 	"os"
 )
 
-var k8sVersion string = cmp.Or(os.Getenv("K8S_VERSION"), "v1.33.1")
+var k8sVersion string
 
 func GetK8SVersion() string {
-	return k8sVersion
+	if k8sVersion != "" {
+		return k8sVersion
+	}
+
+	return os.Getenv("K8S_VERSION")
 }
