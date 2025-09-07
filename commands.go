@@ -147,6 +147,7 @@ func appsCmd() *cobra.Command {
 	)
 
 	cmd.PersistentFlags().StringP("name", "n", "", "Specify the specific name of the application")
+	cmd.PersistentFlags().StringP("kubeconfig", "k", "", "Specify the specific kubeconfig file to use")
 
 	return cmd
 }

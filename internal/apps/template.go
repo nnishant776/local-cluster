@@ -36,6 +36,9 @@ func NewTemplateCommand() *cobra.Command {
 				"template",
 				"--disable-force-update",
 			}
+			if kcfg := cmd.Flag("kubeconfig").Value.String(); kcfg != "" {
+				cmdArgs = append(cmdArgs, "--kubeconfig", kcfg)
+			}
 
 			// Add name filter if provided
 			if appName := cmd.Flag("name"); appName != nil && appName.Value.String() != "" {
