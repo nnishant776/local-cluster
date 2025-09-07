@@ -4,6 +4,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  contents: write
+  actions: write
+
 jobs:
   build:
     name: Build for ${{ matrix.os }}
@@ -13,6 +17,8 @@ jobs:
         os: [ubuntu-24.04, ubuntu-24.04-arm]
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.release.tag_name }}
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -20,7 +26,9 @@ jobs:
         go-version: '1.25'
 
     - name: Build
-      run: make build k8s_version=${{ github.tag_name }} runtime=docker
+      run: make build k8s_version=${{ github.event.release.tag_name }} runtime=docker container=true
 
     - name: Publish release asset
-      run: gh release upload ${{ github.tag_name }} assets/lcctl*
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: gh release upload ${{ github.event.release.tag_name }} bin/lcctl-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m)

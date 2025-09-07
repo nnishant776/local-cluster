@@ -150,6 +150,8 @@ func newDownloadCmd() *cobra.Command {
 				return err
 			}
 
+			// ghClient = ghClient.WithAuthToken(cmp.Or(os.Getenv("GH_TOKEN"), os.Getenv("GITHUB_TOKEN")))
+
 			// Find the correct asset name
 			assetName := k3sBinaryName()
 			relAsset := findReleaseAsset(assetName, relInfo.Assets)

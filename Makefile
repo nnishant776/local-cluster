@@ -25,11 +25,11 @@ endif
 build: container:=false
 build: runtime:=podman
 build: cmd:=$(runtime) run \
-	--rm -it \
-	-v $$(dirname $$(realpath Makefile)):$$(dirname $$(realpath Makefile))	\
+	--rm \
+	-v $(projroot):$(projroot)	\
 	--security-opt seccomp=unconfined \
 	--security-opt label=disable \
-	-w $$(dirname $$(realpath Makefile)) \
+	-w $(projroot) \
 	-e K8S_VERSION=$(k8s_version) \
 	golang:latest
 build:
@@ -37,7 +37,9 @@ ifeq ($(container),true)
 	$(eval build: cmd:=)
 endif
 	env K8S_VERSION=$(k8s_version) $(cmd) sh -c \
-		"go generate . && go build -v \
+		"git config --global --add safe.directory $(projroot) && \
+		go generate . && \
+		go build -v \
 		-ldflags \"-s -w -X 'github.com/nnishant776/local-cluster/config.k8sVersion=$(k8s_version)' -X 'k8s.io/component-base/version.gitVersion=$(k8s_version)' -X 'helm.sh/helm/v4/pkg/chart/v2/util.k8sVersionMinor=$(k8s_version_minor)'\" \
 		-o bin/lcctl-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) github.com/nnishant776/local-cluster"
 
