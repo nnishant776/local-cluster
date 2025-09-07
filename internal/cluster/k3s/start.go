@@ -1,10 +1,14 @@
 package k3d
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strconv"
 
 	errstk "github.com/nnishant776/errstack"
+	"github.com/nnishant776/local-cluster/internal/utils"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3s"
 	"github.com/spf13/cobra"
 )
@@ -16,16 +20,11 @@ func NewStartCommand(_ *k3s.ClusterConfig) *cobra.Command {
 		Long:  "Start the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// Extract the config file path
-			configPath := ""
-			if clusterCfg := cmd.Flag("cluster-config"); clusterCfg != nil {
-				configPath = clusterCfg.Value.String()
-			}
+			configPath := filepath.Join(utils.GetAppConfigDir(), "cluster", "config.yaml")
 
 			newArgs := []string{"server"}
-			if agentFlag := cmd.Flag("agent"); agentFlag != nil {
-				if agentFlag.Value.String() == "true" {
-					newArgs = []string{"agent"}
-				}
+			if cmd.Flag("agent").Value.String() == "true" {
+				newArgs = []string{"agent"}
 			}
 
 			if len(args) <= 0 {
@@ -41,12 +40,26 @@ func NewStartCommand(_ *k3s.ClusterConfig) *cobra.Command {
 			proc.Stdout = os.Stdout
 			proc.Stderr = os.Stderr
 
-			// Run the command till completion
-			if err := proc.Run(); err != nil {
-				return errstk.New(err, errstk.WithStack())
+			// Start the command
+			if err := proc.Start(); err != nil {
+				return errstk.New(fmt.Errorf("failed to start k3s: %w", err), errstk.WithStack())
 			}
 
-			return nil
+			// Record the PID of the started process
+			runtimeDir := utils.GetAppRuntimeDir()
+			if err := os.MkdirAll(runtimeDir, 0o755); err != nil {
+				return err
+			}
+			if err := os.WriteFile(
+				filepath.Join(runtimeDir, "pid"),
+				[]byte(strconv.FormatInt(int64(proc.Process.Pid), 10)),
+				0o644,
+			); err != nil {
+				return err
+			}
+
+			// Wait for the process to complete
+			return errstk.New(proc.Wait(), errstk.WithStack())
 		},
 	}
 

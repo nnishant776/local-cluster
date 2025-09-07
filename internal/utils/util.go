@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -48,4 +49,14 @@ func GetAppDataDir() string {
 	}
 
 	return filepath.Join(dataDir, "lcctl")
+}
+
+func GetAppRuntimeDir() string {
+	runtimeDir := "/run/lcctl"
+
+	if os.Getuid() != 0 {
+		runtimeDir = fmt.Sprintf("/run/user/%d/lcctl", os.Getuid())
+	}
+
+	return runtimeDir
 }

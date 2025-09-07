@@ -2,28 +2,50 @@ package k3d
 
 import (
 	"os"
-	"os/exec"
+	"path/filepath"
+	"strconv"
+	"syscall"
 
 	errstk "github.com/nnishant776/errstack"
+	"github.com/nnishant776/local-cluster/internal/utils"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3s"
 	"github.com/spf13/cobra"
 )
 
-func k3sStopCommand(cfg *k3s.ClusterConfig) *cobra.Command {
+func NewStopCommand(cfg *k3s.ClusterConfig) *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop the cluster",
 		Long:  "Stop the cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Define the command
-			proc := exec.CommandContext(cmd.Context(), "k3d", "cluster", "stop", cfg.Name)
+			// Read the PID file
+			pidFilePath := filepath.Join(utils.GetAppRuntimeDir(), "pid")
+			pidStr, err := os.ReadFile(pidFilePath)
+			if err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
 
-			// Connect outputs to the current process's outputs
-			proc.Stdout = os.Stdout
-			proc.Stderr = os.Stderr
+			pid, err := strconv.ParseInt(string(pidStr), 10, 32)
+			if err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
 
-			// Run the command till completion
-			if err := proc.Run(); err != nil {
+			if pid <= 1 {
+				return errstk.NewString(
+					"invalid cluster process id: "+string(pidStr), errstk.WithStack(),
+				)
+			}
+
+			proc, err := os.FindProcess(int(pid))
+			if err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
+
+			if err := proc.Signal(syscall.SIGTERM); err != nil {
+				return errstk.New(err, errstk.WithStack())
+			}
+
+			if err := os.RemoveAll(pidFilePath); err != nil {
 				return errstk.New(err, errstk.WithStack())
 			}
 
