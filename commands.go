@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -169,6 +170,7 @@ func installCmd() *cobra.Command {
 			}
 
 			// Clear the existing directory
+			fmt.Printf("Performing new installation at '%s'\n", configDir)
 			if rmErr := os.RemoveAll(configDir); rmErr != nil {
 				return errstk.New(rmErr, errstk.WithStack())
 			}
@@ -176,26 +178,28 @@ func installCmd() *cobra.Command {
 			// Copy deployment configuration to correct path
 			configSubtree, err := fs.Sub(bundle, "deployment")
 			if err != nil {
-				return err
+				return errstk.New(err, errstk.WithStack())
 			}
+			fmt.Printf("Copying configuration files at '%s'\n", configDir)
 			err = os.CopyFS(configDir, configSubtree)
 			if err != nil {
-				return err
+				return errstk.New(err, errstk.WithStack())
 			}
 
 			// Copy cluster binary to correct path
 			binSubtree, err := fs.Sub(bundle, "assets")
 			if err != nil {
-				return err
+				return errstk.New(err, errstk.WithStack())
 			}
 			binarySourcePath := filepath.Join(dataDir, "bin")
+			fmt.Printf("Copying binary files at '%s'\n", binarySourcePath)
 			err = os.CopyFS(binarySourcePath, binSubtree)
 			if err != nil {
-				return err
+				return errstk.New(err, errstk.WithStack())
 			}
 			fs.WalkDir(binSubtree, ".", func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
-					return err
+					return errstk.New(err, errstk.WithStack())
 				}
 
 				if d.Type().IsDir() {
@@ -204,10 +208,16 @@ func installCmd() *cobra.Command {
 
 				binPath := filepath.Join(binarySourcePath, path)
 				if err := os.Chmod(binPath, 0o755); err != nil {
-					return err
+					return errstk.New(err, errstk.WithStack())
 				}
 
-				return os.Symlink(binPath, filepath.Join(installDir, path))
+				targetPath := filepath.Join(installDir, path)
+				fmt.Printf("Creating symlink for '%s' at '%s'\n", binPath, targetPath)
+				if err := os.Symlink(binPath, targetPath); err != nil {
+					return errstk.New(err, errstk.WithStack())
+				}
+
+				return nil
 			})
 
 			configPath := filepath.Join(configDir, "config.yaml")
@@ -236,14 +246,18 @@ func uninstallCmd() *cobra.Command {
 			dataDir := utils.GetAppDataDir()
 			installDir := utils.GetInstallDir()
 
+			fmt.Printf("Performing uninstallation at '%s'\n", configDir)
+
 			// Clear the existing config directory
+			fmt.Printf("Removing configurations from '%s'\n", configDir)
 			if rmErr := os.RemoveAll(configDir); rmErr != nil {
 				return errstk.New(rmErr, errstk.WithStack())
 			}
 
 			if cmd.Flag("purge").Value.String() == "true" {
 				// Clear the existing data directory
-				if rmErr := os.RemoveAll(configDir); rmErr != nil {
+				fmt.Printf("Removing binary files from '%s'\n", dataDir)
+				if rmErr := os.RemoveAll(dataDir); rmErr != nil {
 					return errstk.New(rmErr, errstk.WithStack())
 				}
 
@@ -254,16 +268,21 @@ func uninstallCmd() *cobra.Command {
 				}
 				fs.WalkDir(binSubtree, ".", func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
-						return err
+						return errstk.New(err, errstk.WithStack())
 					}
 
 					if d.Type().IsDir() {
 						return nil
 					}
 
-					return os.Remove(filepath.Join(installDir, path))
+					targetPath := filepath.Join(installDir, path)
+					fmt.Printf("Removing symlink for '%s' at '%s'\n", path, targetPath)
+					if err := os.Remove(targetPath); err != nil {
+						return errstk.New(err, errstk.WithStack())
+					}
+
+					return nil
 				})
-				return os.RemoveAll(dataDir)
 			}
 
 			return nil
