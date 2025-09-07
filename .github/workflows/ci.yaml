@@ -1,0 +1,26 @@
+name: Build
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.25'
+
+    - name: Build
+      run: make build k8s_version=${{ github.tag_name }} runtime=docker
+
+    - name: Publish release asset
+      run: gh release upload ${{ github.tag_name }} assets/lcctl*
