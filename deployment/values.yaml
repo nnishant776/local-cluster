@@ -54,3 +54,7 @@ apps:
       #       entries:
       #         - { "class": "IN", "type": "CNAME", "value": "@" }
     extraZones: []
+  docker-registry:
+    enabled: true
+    persistentVolume:
+      capacity: 50Gi

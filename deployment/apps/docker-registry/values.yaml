@@ -1,0 +1,101 @@
+replicaCount: 1
+
+image:
+  repository: docker.io/registry
+  pullPolicy: IfNotPresent
+  tag: "2"
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+podSecurityContext: {}
+  # fsGroup: 2000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 5000
+
+ingress:
+  enabled: true
+  annotations: {}
+    # kubernetes.io/tls-acme: "true"
+
+httpRoute:
+  enabled: false
+  annotations: {}
+  parentRefs:
+  - name: gateway
+    sectionName: http
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  tcpSocket:
+    port: 5000
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+  periodSeconds: 10
+readinessProbe:
+  tcpSocket:
+    port: 5000
+  initialDelaySeconds: 5
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+  periodSeconds: 10
+
+nodeSelector:
+  node-role.kubernetes.io/control-plane: "true"
+
+tolerations:
+  - key: CriticalAddonsOnly
+    value: "true"
+    operator: Equal
+    effect: NoSchedule
+
+affinity: {}
+
+persistentVolume:
+  enabled: true
+  reclaimPolicy: Retain
+  storageType:
+    local:
+      path: /mnt/docker/registry
+    # hostPath:
+    #   path: /mnt/docker/registry
+    #   type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: In
+            values:
+              - "true"
+
+storageClass:
+  name: local-storage
+  bindingMode: WaitForFirstConsumer
