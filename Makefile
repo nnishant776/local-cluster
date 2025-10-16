@@ -46,7 +46,7 @@ endif
 
 install:
 	if [ $$(id -u) != 0 ]; then \
-		cp bin/lcctl $$HOME/.local/bin/lcctl; \
+		cp bin/lcctl-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) $$HOME/.local/bin/lcctl; \
 	else \
-		cp bin/lcctl /usr/local/bin/lcctl; \
+		cp bin/lcctl-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) /usr/local/bin/lcctl; \
 	fi
