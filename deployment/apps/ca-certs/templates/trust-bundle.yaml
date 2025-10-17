@@ -3,6 +3,7 @@ apiVersion: trust.cert-manager.io/v1alpha1
 kind: Bundle
 metadata:
   name: {{ .Values.tls.configMap.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   sources:
   - useDefaultCAs: true

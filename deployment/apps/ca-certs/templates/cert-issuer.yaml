@@ -4,6 +4,7 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: self-signed-issuer
+  namespace: {{ .Release.Namespace }}
 spec:
   selfSigned: {}
 ---
@@ -11,7 +12,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: self-signed-ca
-  namespace: cert-manager
+  namespace: {{ .Release.Namespace }}
 spec:
   isCA: true
   commonName: {{ .Values.caConfig.commonName }}
@@ -29,6 +30,7 @@ apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: {{ .Values.caConfig.issuer.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ca:
     secretName: {{ .Values.caConfig.secret.name }}
