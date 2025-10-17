@@ -34,79 +34,70 @@ deploymentMode: {{ $deploymentMode }}
 {{- if eq $deploymentMode "SingleBinary" }}
 singleBinary:
   replicas: 1
-{{- end }}
-
 backend:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
-
 read:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 write:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 3
-{{- end }}
-
 ingester:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 querier:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 queryFrontend:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 queryScheduler:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 distributor:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 compactor:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 indexGateway:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 bloomCompactor:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
-  replicas: 2
-{{- end }}
 bloomGateway:
-{{- if eq $deploymentMode "SingleBinary" }}
   replicas: 0
-{{- else }}
+{{- else if eq $deploymentMode "Distributed" }}
+singleBinary:
+   replicas: 0
+ingester:
+  replicas: 3 # To ensure data durability with replication
+  zoneAwareReplication:
+     enabled: false
+querier:
+  replicas: 3 # Improve query performance via parallelism
+  maxUnavailable: 2
+queryFrontend:
   replicas: 2
+  maxUnavailable: 1
+queryScheduler:
+  replicas: 2
+distributor:
+  replicas: 3 
+  maxUnavailable: 2
+compactor:
+  replicas: 1
+indexGateway:
+  replicas: 2
+  maxUnavailable: 1
+bloomPlanner:
+  replicas: 0
+bloomBuilder:
+  replicas: 0
+bloomGateway:
+  replicas: 0
+backend:
+   replicas: 0
+read:
+   replicas: 0
+write:
+   replicas: 0
+{{- else if eq $deploymentMode "SimpleScalable" }}
+backend:
+  replicas: 2
+read:
+  replicas: 2
+write:
+  replicas: 3 # To ensure data durability with replication
 {{- end }}
