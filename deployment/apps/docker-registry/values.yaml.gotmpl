@@ -3,3 +3,4 @@ ingress:
   className: {{ get "apps.ingress-controller.type" .Values }}
   annotations:
     kubernetes.io/ingress.class: {{ get "apps.ingress-controller.type" .Values }}
+    cert-manager.io/cluster-issuer: {{ get "global.tls.ca.issuerName" .Values }}
