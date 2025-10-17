@@ -11,23 +11,32 @@ global:
 apps:
   cert-manager:
     enabled: true
+    namespace: &certns cert-manager
   trust-manager:
     enabled: true
+    namespace: *certns
   ca-certs:
     enabled: true
+    namespace: *certns
   grafana:
     enabled: true
+    namespace: &monitoringns monitoring
   loki:
     enabled: true
+    namespace: *monitoringns
   alloy:
     enabled: true
+    namespace: *monitoringns
   ingress-controller:
     enabled: true
+    namespace: kube-system
     type: "traefik" # ingress-nginx, traefik
   etcd:
     enabled: true
+    namespace: kube-system
   dnsserver:
     enabled: true
+    namespace: &addonsns addons
     zones: []
       # - rootDomain: "nncorp.home"
       #   ttl: 5m
@@ -56,5 +65,6 @@ apps:
     extraZones: []
   docker-registry:
     enabled: true
+    namespace: *addonsns
     persistentVolume:
       capacity: 50Gi

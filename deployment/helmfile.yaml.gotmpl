@@ -53,7 +53,7 @@ repositories:
 
 releases:
   - name: ingress-controller
-    namespace: kube-system
+    namespace: {{ .Values | get "apps.ingress-controller.namespace" }}
     installed: {{ .Values | get "apps.ingress-controller.enabled" }}
     chart: apps/ingress-controller
     values:
@@ -62,7 +62,7 @@ releases:
           enabled: true
 
   - name: cert-manager
-    namespace: cert-manager
+    namespace: {{ .Values | get "apps.cert-manager.namespace" }}
     installed: {{ .Values | get "apps.cert-manager.enabled" }}
     chart: jetstack/cert-manager
     version: v1.17.1
@@ -70,29 +70,29 @@ releases:
       - apps/cert-manager/values.yaml
 
   - name: trust-manager
-    namespace: cert-manager
+    namespace: {{ .Values | get "apps.trust-manager.namespace" }}
     installed: {{ .Values | get "apps.trust-manager.enabled" }}
     chart: jetstack/trust-manager
     version: 0.16.0
     needs:
-      - cert-manager/cert-manager
+      - {{ .Values | get "apps.cert-manager.namespace" }}/cert-manager
     values:
       - apps/trust-manager/values.yaml
 
   - name: ca-certs
-    namespace: cert-manager
+    namespace: {{ .Values | get "apps.ca-certs.namespace" }}
     installed: {{ .Values | get "apps.ca-certs.enabled" }}
     chart: apps/ca-certs
     inherit:
       - template: default
     needs:
-      - cert-manager/trust-manager
+      - {{ .Values | get "apps.cert-manager.namespace" }}/trust-manager
     values:
       - apps/ca-certs/values.yaml.gotmpl
       - {{ .Values | get "apps.ca-certs" | toYaml | nindent 8 }}
 
   - name: grafana
-    namespace: monitoring
+    namespace: {{ .Values | get "apps.grafana.namespace" }}
     installed: {{ .Values | get "apps.grafana.enabled" }}
     chart: grafana/grafana
     version: 8.10.4
@@ -103,7 +103,7 @@ releases:
       - {{ .Values | get "apps.grafana" | toYaml | nindent 8 }}
 
   - name: loki
-    namespace: monitoring
+    namespace: {{ .Values | get "apps.loki.namespace" }}
     installed: {{ .Values | get "apps.loki.enabled" }}
     chart: grafana/loki
     version: 6.29.0
@@ -114,7 +114,7 @@ releases:
       - {{ .Values | get "apps.loki" | toYaml | nindent 8 }}
 
   - name: alloy
-    namespace: monitoring
+    namespace: {{ .Values | get "apps.alloy.namespace" }}
     installed: {{ .Values | get "apps.alloy.enabled" }}
     chart: grafana/alloy
     version: 0.12.5
@@ -125,7 +125,7 @@ releases:
       - {{ .Values | get "apps.alloy" | toYaml | nindent 8 }}
 
   - name: etcd
-    namespace: kube-system
+    namespace: {{ .Values | get "apps.etcd.namespace" }}
     installed: {{ .Values | get "apps.etcd.enabled" }}
     chart: apps/etcd
     inherit:
@@ -134,7 +134,7 @@ releases:
       - {{ .Values | get "apps.etcd" | toYaml | nindent 8 }}
 
   - name: dnsserver
-    namespace: nameserver
+    namespace: {{ .Values | get "apps.dnsserver.namespace" }}
     installed: {{ .Values | get "apps.dnsserver.enabled" }}
     chart: apps/dnsserver
     inherit:
@@ -144,7 +144,7 @@ releases:
       - {{ .Values | get "apps.dnsserver" | toYaml | nindent 8 }}
 
   - name: docker-registry
-    namespace: kube-system
+    namespace: {{ .Values | get "apps.docker-registry.namespace" }}
     installed: {{ .Values | get "apps.docker-registry.enabled" }}
     chart: apps/docker-registry
     inherit:
