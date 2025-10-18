@@ -1,6 +1,8 @@
 {{- $deploymentMode := (default "SingleBinary" (getOrNil "apps.loki.deploymentMode" .Values)) }}
 loki:
   auth_enabled: false
+  dnsConfig: |
+    {{- .Values.global.dns.config | toYaml | nindent 4 }}
   commonConfig:
     replication_factor: 1
   schemaConfig:
@@ -28,7 +30,7 @@ loki:
       directory: {{ .Values.deployment.cluster.dataPath.cluster }}
 minio:
   enabled: true
-      
+
 deploymentMode: {{ $deploymentMode }}
 
 {{- if eq $deploymentMode "SingleBinary" }}
@@ -74,7 +76,7 @@ queryFrontend:
 queryScheduler:
   replicas: 2
 distributor:
-  replicas: 3 
+  replicas: 3
   maxUnavailable: 2
 compactor:
   replicas: 1
@@ -98,6 +100,8 @@ backend:
   replicas: 2
 read:
   replicas: 2
+  dnsConfig: |
+    {{- .Values.global.dns.config | toYaml | nindent 4 }}
 write:
   replicas: 3 # To ensure data durability with replication
 {{- end }}
