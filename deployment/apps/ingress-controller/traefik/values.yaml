@@ -22,11 +22,11 @@ traefik:
       enabled: false
       debug: false
     kubernetesGateway:
-      enabled: false
+      enabled: true
   gateway:
-    enabled: false
+    enabled: true
   gatewayClass:
-    enabled: false
+    enabled: true
   ingressRoute:
     dashboard:
       enabled: false
@@ -68,7 +68,7 @@ traefik:
     kubernetesGateway:
       enabled: true
       # This option currently enables support for TCPRoute and TLSRoute.
-      experimentalChannel: false
+      experimentalChannel: true
       nativeLBByDefault: true
     file:
       enabled: false
@@ -78,7 +78,7 @@ traefik:
       level: "INFO"
       noColor: true
     access:
-      enabled: false
+      enabled: true
   metrics:
     addInternals: false
     prometheus:
