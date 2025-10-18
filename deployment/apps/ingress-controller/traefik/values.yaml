@@ -1,4 +1,6 @@
 traefik:
+  global:
+    checkNewVersion: false
   deployment:
     # -- Enable deployment
     enabled: true
