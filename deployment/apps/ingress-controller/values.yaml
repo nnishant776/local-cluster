@@ -2,3 +2,5 @@ traefik:
   enabled: false
 ingress-nginx:
   enabled: false
+gateway-api:
+  enabled: false

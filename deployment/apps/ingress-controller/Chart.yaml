@@ -13,3 +13,7 @@ dependencies:
     version: "37.1.2"
     condition: traefik.enabled
     repository: "https://traefik.github.io/charts"
+  - name: gateway-api
+    version: 0.1.0
+    condition: traefik.enabled
+    path: "file://gateway-api"
