@@ -10,6 +10,6 @@ dependencies:
     condition: ingress-nginx.enabled
     repository: "https://kubernetes.github.io/ingress-nginx"
   - name: traefik
-    version: "34.5.0"
+    version: "37.1.2"
     condition: traefik.enabled
     repository: "https://traefik.github.io/charts"
