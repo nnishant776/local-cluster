@@ -48,6 +48,11 @@ ingress:
   annotations:
     kubernetes.io/ingress.class: {{ get "apps.ingress-controller.type" .Values }}
     cert-manager.io/cluster-issuer: {{ .Values.global.tls.ca.issuerName }}
+    {{- if eq (get "apps.ingress-controller.type" .Values) "traefik" }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    {{- else }}
+    {{- end }}
   labels:
     app.kubernetes.io/name: grafana
   path: /
