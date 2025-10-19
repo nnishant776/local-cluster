@@ -3,6 +3,7 @@ package model
 import (
 	"encoding/json"
 
+	"github.com/nnishant776/local-cluster/pkg/model/cluster/common"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3d"
 	"github.com/nnishant776/local-cluster/pkg/model/cluster/k3s"
 )
@@ -19,7 +20,8 @@ const (
 )
 
 type Config struct {
-	Deployment DeploymentConfig `json:"deployment,omitempty"`
+	Deployment DeploymentConfig       `json:"deployment,omitempty"`
+	Infra      common.BaseInfraConfig `json:"infra"`
 }
 
 type _DeploymentConfig struct {
