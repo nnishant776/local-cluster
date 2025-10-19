@@ -1,76 +1,17 @@
-global:
-  tls:
-    ca:
-      selfSigned: false
-      secretName: private-root-ca
-      issuerName: tls-cert-issuer
-    cert:
-      configMap:
-        name: trusted-ca-certs
-        key: cert.pem
-
-deployment:
-  cluster:
-    agentArgs: []
-    bootstrap:
-      dns: true
-    dataPath:
-      cluster: /mnt
-      host: /mnt
-    name: docker-k3s
-    registry:
-      enabled: true
-      mirror:
-        endpoints: []
-    serverArgs: []
-    services:
-      ingressController: false
-      loadBalancer: false
-      metricsServer: false
-      storageProvisioner: true
-    volumeMounts: []
-  environment: k3d
-infra:
-  rootDomain: local.cluster.dev
-  tls:
-    privateCA:
-      commonName: universe.com
-      countryCode: UC
-      emailAddress: mail@universe.com
-      locality: Mirach
-      organization: Constellation
-      organizationUnit: Development
-      state: Andromeda
-
 apps:
-  cert-manager:
-    enabled: true
-    namespace: &certns cert-manager
-  trust-manager:
-    enabled: true
-    namespace: *certns
-  ca-certs:
-    enabled: true
-    namespace: *certns
-  grafana:
-    enabled: true
-    namespace: &monitoringns monitoring
-  loki:
-    enabled: true
-    namespace: *monitoringns
   alloy:
     enabled: true
-    namespace: *monitoringns
-  ingress-controller:
+    namespace: monitoring
+  ca-certs:
     enabled: true
-    namespace: kube-system
-    type: "traefik" # ingress-nginx, traefik
-  etcd:
+    namespace: cert-manager
+  cert-manager:
     enabled: true
-    namespace: kube-system
+    namespace: cert-manager
   dnsserver:
     enabled: true
-    namespace: &addonsns addons
+    extraZones: []
+    namespace: addons
     zones: []
       # - rootDomain: "nncorp.home"
       #   ttl: 5m
@@ -96,20 +37,79 @@ apps:
       #     - name: "monitoring"
       #       entries:
       #         - { "class": "IN", "type": "CNAME", "value": "@" }
-    extraZones: []
   docker-registry:
     enabled: true
-    namespace: *addonsns
+    namespace: addons
     persistentVolume:
       capacity: 50Gi
-
+  etcd:
+    enabled: true
+    namespace: kube-system
+  grafana:
+    enabled: true
+    namespace: monitoring
+  ingress-controller:
+    enabled: true
+    namespace: kube-system
+    type: traefik
+  loki:
+    enabled: true
+    namespace: monitoring
+  trust-manager:
+    enabled: true
+    namespace: cert-manager
+deployment:
+  cluster:
+    agentArgs: []
+    bootstrap:
+      dns: true
+    dataPath:
+      cluster: /mnt
+      host: /mnt
+    name: docker-k3s
+    registry:
+      enabled: true
+      mirror:
+        endpoints: []
+    serverArgs: []
+    services:
+      ingressController: false
+      loadBalancer: false
+      metricsServer: false
+      storageProvisioner: true
+    volumeMounts: []
+  environment: k3d
+global:
+  tls:
+    ca:
+      issuerName: tls-cert-issuer
+      secretName: private-root-ca
+      selfSigned: false
+    cert:
+      configMap:
+        key: cert.pem
+        name: trusted-ca-certs
+infra:
+  rootDomain: local.cluster.dev
+  tls:
+    privateCA:
+      commonName: mirach.milkyway.com
+      countryCode: MW
+      emailAddress: mirach@milkyway.com
+      expiryDate: "2028-10-19"
+      issueDate: "2025-10-19"
+      locality: Pegasus Square
+      organization: Constellation
+      organizationUnit: Star
+      postalCode: "209389"
+      state: Andromeda
+      streetAddress: Mu Andromedae
 secrets:
+  apps:
+    grafana:
+      password: admin
+      username: admin
   tls:
     ca:
       certificate: null
       privateKey: null
-
-  apps:
-    grafana:
-      username: admin
-      password: admin
