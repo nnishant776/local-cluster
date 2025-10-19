@@ -18,7 +18,7 @@ type BootstrapConfig struct {
 
 type RegistryConfig struct {
 	Enabled bool           `json:"enabled,omitempty"`
-	Mirror  RegistryMirror `json:"mirror,omitempty"`
+	Mirror  RegistryMirror `json:"mirror,omitzero"`
 }
 
 type RegistryMirror struct {
@@ -26,9 +26,9 @@ type RegistryMirror struct {
 }
 
 type RegistryEndpoint struct {
-	Host string           `json:"host,omitempty"`
-	Auth RegistryAuthInfo `json:"auth,omitempty"`
-	TLS  RegistryTLSInfo  `json:"tls,omitempty"`
+	Host string           `json:"host,omitzero"`
+	Auth RegistryAuthInfo `json:"auth,omitzero"`
+	TLS  RegistryTLSInfo  `json:"tls,omitzero"`
 }
 
 type RegistryAuthInfo struct {
@@ -44,11 +44,11 @@ type RegistryTLSInfo struct {
 }
 
 type BaseClusterConfig struct {
-	Name            string          `json:"name,omitempty"`
-	K8SVersion      string          `json:"k8sVersion,omitempty"`
-	DataPath        PathMapping     `json:"dataPath,omitempty"`
-	VolumeMounts    []PathMapping   `json:"volumeMounts,omitempty"`
-	BuiltinServcies BuiltinServices `json:"services,omitempty"`
-	Bootstrap       BootstrapConfig `json:"bootstrap,omitempty"`
-	Registry        RegistryConfig  `json:"registry,omitempty"`
+	Name            string          `json:"name,omitzero"`
+	K8SVersion      string          `json:"k8sVersion,omitzero"`
+	DataPath        PathMapping     `json:"dataPath,omitzero"`
+	VolumeMounts    []PathMapping   `json:"volumeMounts,omitzero"`
+	BuiltinServcies BuiltinServices `json:"services,omitzero"`
+	Bootstrap       BootstrapConfig `json:"bootstrap,omitzero"`
+	Registry        RegistryConfig  `json:"registry,omitzero"`
 }
