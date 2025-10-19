@@ -65,11 +65,13 @@ func toolsCmd() *cobra.Command {
 	helmfileCmd := tools.NewHelmfileCommand()
 	kubectlCmd := tools.NewKubectlCommand()
 	k9sCmd := tools.NewK9SCommand()
+	certCmd := tools.NewCertificateCommand()
 
 	toolCmd.AddCommand(helmCmd)
 	toolCmd.AddCommand(helmfileCmd)
 	toolCmd.AddCommand(kubectlCmd)
 	toolCmd.AddCommand(k9sCmd)
+	toolCmd.AddCommand(certCmd)
 
 	return toolCmd
 }
