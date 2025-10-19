@@ -43,7 +43,7 @@ type RegistryTLSInfo struct {
 	CAFile   string `json:"ca_file,omitempty"`
 }
 
-type BaseClusterConfig struct {
+type BaseDeploymentConfig struct {
 	Name            string          `json:"name,omitzero"`
 	K8SVersion      string          `json:"k8sVersion,omitzero"`
 	DataPath        PathMapping     `json:"dataPath,omitzero"`

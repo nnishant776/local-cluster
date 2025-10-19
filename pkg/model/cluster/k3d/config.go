@@ -19,7 +19,7 @@ type APIServerConfig struct {
 }
 
 type ClusterConfig struct {
-	common.BaseClusterConfig
+	common.BaseDeploymentConfig
 	Network   NetworkConfig   `json:"network,omitempty"`
 	ApiServer APIServerConfig `json:"apiServer,omitempty"`
 }

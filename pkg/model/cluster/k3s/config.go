@@ -5,5 +5,5 @@ import (
 )
 
 type ClusterConfig struct {
-	common.BaseClusterConfig
+	common.BaseDeploymentConfig
 }
