@@ -90,7 +90,7 @@ func clusterCmd() *cobra.Command {
 			// Extract the config file path
 			configPath := filepath.Join(utils.GetAppConfigDir(), "config.yaml")
 
-			cfg, _, err := parseConfig(configPath)
+			cfg, _, err := utils.ParseConfig(configPath)
 			if err != nil {
 				return err
 			}
@@ -347,7 +347,7 @@ func mergeConfig(w io.Writer, rawConfig, cfgOverride map[string]any) error {
 }
 
 func updateK8SVersionInConfig(version string, configPath string) (*model.Config, map[string]any, error) {
-	cfg, rawConfig, err := parseConfig(configPath)
+	cfg, rawConfig, err := utils.ParseConfig(configPath)
 	if err != nil {
 		return nil, nil, err
 	}
