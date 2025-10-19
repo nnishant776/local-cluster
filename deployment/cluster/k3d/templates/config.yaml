@@ -12,7 +12,7 @@ kubeAPI:
 image: rancher/k3s:{{ .Values.deployment.cluster.k8sVersion }}
 subnet: {{ .Values.deployment.cluster.network.subnet }}
 volumes:
-  {{- with .Values.deployment.cluster.dataPath.host }}
+  {{- with .Values.deployment.cluster.dataPath }}
   - volume: {{ .host }}:{{ .cluster }}   # Make sure the source directory exists
     nodeFilters:
       - server:*
