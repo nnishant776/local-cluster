@@ -1,3 +1,14 @@
+global:
+  tls:
+    ca:
+      selfSigned: false
+      secretName: private-root-ca
+      issuerName: tls-cert-issuer
+    cert:
+      configMap:
+        name: trusted-ca-certs
+        key: cert.pem
+
 deployment:
   cluster:
     agentArgs: []
@@ -30,3 +41,75 @@ infra:
       organization: Constellation
       organizationUnit: Development
       state: Andromeda
+
+apps:
+  cert-manager:
+    enabled: true
+    namespace: &certns cert-manager
+  trust-manager:
+    enabled: true
+    namespace: *certns
+  ca-certs:
+    enabled: true
+    namespace: *certns
+  grafana:
+    enabled: true
+    namespace: &monitoringns monitoring
+  loki:
+    enabled: true
+    namespace: *monitoringns
+  alloy:
+    enabled: true
+    namespace: *monitoringns
+  ingress-controller:
+    enabled: true
+    namespace: kube-system
+    type: "traefik" # ingress-nginx, traefik
+  etcd:
+    enabled: true
+    namespace: kube-system
+  dnsserver:
+    enabled: true
+    namespace: &addonsns addons
+    zones: []
+      # - rootDomain: "nncorp.home"
+      #   ttl: 5m
+      #   soa:
+      #     rootNameserver: ns.nncorp.home.
+      #     maintainer: admin.nncorp.home
+      #     serial: 2020010511
+      #     peerIntervals:
+      #       refresh: 1d
+      #       retry: 2h
+      #       expiration: 4w
+      #     cacheExpiration: 1h
+      #   records:
+      #     - name: "@"
+      #       entries:
+      #         - { "class": "IN", "type": "NS", "value": "ns.nncorp.home" }
+      #         - { "class": "IN", "type": "A", "value": "172.28.0.2" }
+      #         - { "class": "IN", "type": "A", "value": "172.28.0.3" }
+      #         - { "class": "IN", "type": "A", "value": "172.28.0.4" }
+      #     - name: "ns"
+      #       entries:
+      #         - { "class": "IN", "type": "CNAME", "value": "@" }
+      #     - name: "monitoring"
+      #       entries:
+      #         - { "class": "IN", "type": "CNAME", "value": "@" }
+    extraZones: []
+  docker-registry:
+    enabled: true
+    namespace: *addonsns
+    persistentVolume:
+      capacity: 50Gi
+
+secrets:
+  tls:
+    ca:
+      certificate: null
+      privateKey: null
+
+  apps:
+    grafana:
+      username: admin
+      password: admin

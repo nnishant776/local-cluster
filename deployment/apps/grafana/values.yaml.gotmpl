@@ -67,8 +67,8 @@ persistence:
   enabled: false
 initChownData:
   enabled: false
-adminUser: {{ .Values.secrets.grafana.username }}
-adminPassword: {{ .Values.secrets.grafana.password }}
+adminUser: {{ .Values.secrets.apps.grafana.username }}
+adminPassword: {{ .Values.secrets.apps.grafana.password }}
 grafana.ini:
   paths:
     data: /var/lib/grafana/

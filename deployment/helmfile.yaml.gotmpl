@@ -3,22 +3,16 @@ environments:
     values:
       - environments/default.yaml
       - config.yaml
-      - values.yaml
-      - secrets.yaml
       - environments/k3d.yaml
   k3d:
     values:
       - environments/default.yaml
       - config.yaml
-      - values.yaml
-      - secrets.yaml
       - environments/k3d.yaml
   k3s:
     values:
       - environments/default.yaml
       - config.yaml
-      - values.yaml
-      - secrets.yaml
       - environments/k3s.yaml
 ---
 lockFilePath: helmfile.lock
