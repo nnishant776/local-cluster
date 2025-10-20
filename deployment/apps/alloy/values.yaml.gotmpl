@@ -89,6 +89,7 @@ alloy:
       // loki.process receives log entries from other Loki components, applies one or more processing stages,
       // and forwards the results to the list of receivers in the component's arguments.
       loki.process "pod_logs" {
+        stage.decolorize {}
         stage.static_labels {
           values = {
             cluster = "{{ .Values.deployment.cluster.name }}",
