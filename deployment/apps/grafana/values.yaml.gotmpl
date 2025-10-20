@@ -58,11 +58,11 @@ ingress:
   path: /
   pathType: Prefix
   hosts:
-    - {{ .Release.Namespace }}.{{ .Values.infra.rootDomain }}
+    - grafana.{{ .Values.infra.rootDomain }}
   tls:
-  - secretName: {{ .Release.Namespace }}-cert
+  - secretName: grafana-tls-cert
     hosts:
-      - {{ .Release.Namespace }}.{{ .Values.infra.rootDomain }}
+      - grafana.{{ .Values.infra.rootDomain }}
 persistence:
   enabled: false
 initChownData:
