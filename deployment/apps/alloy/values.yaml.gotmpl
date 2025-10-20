@@ -4,7 +4,7 @@ alloy:
     content: |-
       loki.write "default" {
         endpoint {
-          url = "http://loki-gateway.{{ .Release.Namespace }}.svc.cluster.local/loki/api/v1/push"
+          url = "http://loki-gateway.{{ .Values.apps.loki.namespace }}.svc.cluster.local/loki/api/v1/push"
         }
       }
       // Write your Alloy config here:
