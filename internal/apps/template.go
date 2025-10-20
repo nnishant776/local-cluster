@@ -1,7 +1,9 @@
 package apps
 
 import (
+	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/nnishant776/local-cluster/config"
 	"github.com/nnishant776/local-cluster/internal/tools"
@@ -43,6 +45,26 @@ func NewTemplateCommand() *cobra.Command {
 			// Add name filter if provided
 			if appName := cmd.Flag("name"); appName != nil && appName.Value.String() != "" {
 				cmdArgs = append(cmdArgs, "-l", "name="+appName.Value.String())
+			}
+			if grpName := cmd.Flag("group"); grpName != nil && grpName.Value.String() != "" {
+				cmdArgs = append(cmdArgs, "-l", "group="+grpName.Value.String())
+			}
+			if rawFilter := cmd.Flag("raw-filter"); rawFilter != nil && rawFilter.Value.String() != "" {
+				rawFilterStr := rawFilter.Value.String()
+				parts := strings.Split(rawFilterStr, "=")
+				if len(parts) < 2 {
+					return errstk.NewChainString(
+						"app: failed to install application", errstk.WithStack(),
+					).Chain(
+						fmt.Errorf(
+							"invalid filter format: '%s' must have 2 components joined by '='",
+							rawFilterStr,
+						),
+					)
+				}
+				parts[0] = strings.TrimSpace(parts[0])
+				parts[1] = strings.TrimSpace(parts[1])
+				cmdArgs = append(cmdArgs, "-l", strings.Join(parts, "="))
 			}
 
 			// Enable debug logging if verbose flag is specified

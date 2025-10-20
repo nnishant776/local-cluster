@@ -149,6 +149,8 @@ func appsCmd() *cobra.Command {
 	)
 
 	cmd.PersistentFlags().StringP("name", "n", "", "Specify the specific name of the application")
+	cmd.PersistentFlags().StringP("group", "g", "", "Specify the specific group of the application")
+	cmd.PersistentFlags().StringP("raw-filter", "f", "", "Specify the raw filter criteria for listed applications (passed directly to helmfile)")
 	cmd.PersistentFlags().StringP("kubeconfig", "k", "", "Specify the specific kubeconfig file to use")
 
 	return cmd
