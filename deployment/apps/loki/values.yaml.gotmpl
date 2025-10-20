@@ -4,7 +4,9 @@ loki:
   dnsConfig: |
     {{- .Values.global.dns.config | toYaml | nindent 4 }}
   commonConfig:
+    {{- if eq $deploymentMode "SingleBinary" }}
     replication_factor: 1
+    {{- end }}
   schemaConfig:
     configs:
       - from: "2024-04-01"
