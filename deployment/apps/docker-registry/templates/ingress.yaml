@@ -15,7 +15,7 @@ spec:
   ingressClassName: {{ . }}
   {{- end }}
   tls:
-    - secretName: {{ .Release.Namespace }}-cert
+    - secretName: {{ include "docker-registry.fullname" . }}-tls-cert
       hosts:
         - {{ default ( include "docker-registry.fullname" . ) .Values.subDomain }}.{{ .Values.rootDomain }}
   rules:
