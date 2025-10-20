@@ -50,6 +50,8 @@ repositories:
 
 releases:
   - name: ingress-controller
+    labels:
+      group: cluster-service
     namespace: {{ .Values | get "apps.ingress-controller.namespace" }}
     installed: {{ .Values | get "apps.ingress-controller.enabled" }}
     chart: apps/ingress-controller
@@ -59,6 +61,8 @@ releases:
           enabled: true
 
   - name: cert-manager
+    labels:
+      group: security
     namespace: {{ .Values | get "apps.cert-manager.namespace" }}
     installed: {{ .Values | get "apps.cert-manager.enabled" }}
     chart: jetstack/cert-manager
@@ -67,6 +71,8 @@ releases:
       - apps/cert-manager/values.yaml
 
   - name: trust-manager
+    labels:
+      group: security
     namespace: {{ .Values | get "apps.trust-manager.namespace" }}
     installed: {{ .Values | get "apps.trust-manager.enabled" }}
     chart: jetstack/trust-manager
@@ -77,6 +83,8 @@ releases:
       - apps/trust-manager/values.yaml
 
   - name: ca-certs
+    labels:
+      group: security
     namespace: {{ .Values | get "apps.ca-certs.namespace" }}
     installed: {{ .Values | get "apps.ca-certs.enabled" }}
     chart: apps/ca-certs
@@ -89,6 +97,8 @@ releases:
       - {{ .Values | get "apps.ca-certs" | toYaml | nindent 8 }}
 
   - name: grafana
+    labels:
+      group: monitoring
     namespace: {{ .Values | get "apps.grafana.namespace" }}
     installed: {{ .Values | get "apps.grafana.enabled" }}
     chart: grafana/grafana
@@ -100,6 +110,8 @@ releases:
       - {{ .Values | get "apps.grafana" | toYaml | nindent 8 }}
 
   - name: loki
+    labels:
+      group: monitoring
     namespace: {{ .Values | get "apps.loki.namespace" }}
     installed: {{ .Values | get "apps.loki.enabled" }}
     chart: grafana/loki
@@ -111,6 +123,8 @@ releases:
       - {{ .Values | get "apps.loki" | toYaml | nindent 8 }}
 
   - name: alloy
+    labels:
+      group: monitoring
     namespace: {{ .Values | get "apps.alloy.namespace" }}
     installed: {{ .Values | get "apps.alloy.enabled" }}
     chart: grafana/alloy
@@ -122,6 +136,8 @@ releases:
       - {{ .Values | get "apps.alloy" | toYaml | nindent 8 }}
 
   - name: etcd
+    labels:
+      group: addons
     namespace: {{ .Values | get "apps.etcd.namespace" }}
     installed: {{ .Values | get "apps.etcd.enabled" }}
     chart: apps/etcd
@@ -131,6 +147,8 @@ releases:
       - {{ .Values | get "apps.etcd" | toYaml | nindent 8 }}
 
   - name: dnsserver
+    labels:
+      group: addons
     namespace: {{ .Values | get "apps.dnsserver.namespace" }}
     installed: {{ .Values | get "apps.dnsserver.enabled" }}
     chart: apps/dnsserver
@@ -141,6 +159,8 @@ releases:
       - {{ .Values | get "apps.dnsserver" | toYaml | nindent 8 }}
 
   - name: docker-registry
+    labels:
+      group: addons
     namespace: {{ .Values | get "apps.docker-registry.namespace" }}
     installed: {{ .Values | get "apps.docker-registry.enabled" }}
     chart: apps/docker-registry
