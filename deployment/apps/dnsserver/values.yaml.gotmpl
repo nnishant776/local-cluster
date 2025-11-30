@@ -58,7 +58,7 @@ coredns:
       name: health
     - name: ready
     - name: forward
-      parameters: . 8.8.8.8
+      parameters: . /etc/resolv.conf
     - name: cache
       parameters: 30
     - name: loop
