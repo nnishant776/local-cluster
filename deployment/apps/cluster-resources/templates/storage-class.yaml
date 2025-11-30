@@ -1,0 +1,16 @@
+{{- range $index, $scCfg := .Values.storageClasses }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ $scCfg.name }}
+{{- with $scCfg.provisioner }}
+provisioner: {{ . }}
+{{- end }}
+{{- with $scCfg.volumeBindingMode }}
+volumeBindingMode: {{ . }}
+{{- end }}
+{{- with $scCfg.reclaimPolicy }}
+reclaimPolicy: {{ . }}
+{{- end }}
+{{- end }}

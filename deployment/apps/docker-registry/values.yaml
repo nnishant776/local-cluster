@@ -81,4 +81,4 @@ persistentVolumeClaim:
     requests:
       storage: 50Gi
   selector: {}
-  storageClassName:  local-storage
+  storageClassName: local-storage

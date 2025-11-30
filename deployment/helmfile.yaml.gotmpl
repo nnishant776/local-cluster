@@ -170,6 +170,16 @@ releases:
       - apps/docker-registry/values.yaml.gotmpl
       - {{- .Values | get "apps.docker-registry" | toYaml | nindent 8 }}
 
+  - name: cluster-resources
+    labels:
+      group: cluster-resource
+    installed: {{ .Values | get "apps.cluster-resources.enabled" }}
+    chart: apps/cluster-resources
+    inherit:
+      - template: default
+    values:
+      - {{- .Values | get "apps.cluster-resources" | toYaml | nindent 8 }}
+
   - name: cluster
     installed: {{ getOrNil "installed" .Values | default false }}
     chart: cluster/{{ .Environment.Name }}
