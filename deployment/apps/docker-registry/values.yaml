@@ -67,35 +67,18 @@ readinessProbe:
   failureThreshold: 3
   periodSeconds: 10
 
-nodeSelector:
-  node-role.kubernetes.io/control-plane: "true"
+nodeSelector: {}
 
-tolerations:
-  - key: CriticalAddonsOnly
-    value: "true"
-    operator: Equal
-    effect: NoSchedule
+tolerations: {}
 
 affinity: {}
 
-persistentVolume:
-  enabled: true
-  reclaimPolicy: Retain
-  storageType:
-    local:
-      path: /mnt/docker/registry
-    # hostPath:
-    #   path: /mnt/docker/registry
-    #   type: DirectoryOrCreate
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-        - matchExpressions:
-          - key: node-role.kubernetes.io/control-plane
-            operator: In
-            values:
-              - "true"
-
-storageClass:
-  name: local-storage
-  bindingMode: WaitForFirstConsumer
+persistentVolumeClaim:
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  selector: {}
+  storageClassName:  local-storage

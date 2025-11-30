@@ -5,9 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels: {{- include "docker-registry.selectorLabels" . | nindent 4 }}
 spec:
-  storageClassName: {{ .Values.storageClass.name }}
-  accessModes:
-  - ReadWriteMany
-  resources:
-    requests:
-      storage: {{ default "50Gi" .Values.persistentVolume.capacity }}
+  storageClassName: {{ .Values.persistentVolumeClaim.storageClassName }}
+  volumeMode: {{ .Values.persistentVolumeClaim.volumeMode }}
+  accessModes: {{ .Values.persistentVolumeClaim.accessModes }}
+  resources: {{ .Values.persistentVolumeClaim.resources | toYaml | nindent 4 }}
