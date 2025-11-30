@@ -1,0 +1,25 @@
+{{- range $index, $volCfg := .Values.persistentVolumes }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $volCfg.name }}
+  labels: {{- include "cluster-resources.labels" $ | nindent 4 }}
+spec:
+  {{- with $volCfg.capacity }}
+  capacity: {{- . | toYaml | nindent 4 }}
+  {{- end }}
+  accessModes: {{ $volCfg.accessModes }}
+  {{- with $volCfg.storageType }}
+  {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: {{ default "Retain" $volCfg.reclaimPolicy }}
+  storageClassName: {{ default "local-storage" $volCfg.storageClassName }}
+  volumeMode: {{ default "Filesystem" $volCfg.volumeMode }}
+  {{- with $volCfg.nodeAffinity }}
+  nodeAffinity: {{ . | toYaml | nindent 4 }}
+  {{- end }}
+  {{- with $volCfg.selector }}
+  selector: {{ . | toYaml | nindent 4 }}
+  {{- end }}
+{{- end }}

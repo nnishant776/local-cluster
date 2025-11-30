@@ -8,6 +8,8 @@ apps:
   cert-manager:
     enabled: true
     namespace: cert-manager
+  cluster-resources:
+    enabled: true
   dnsserver:
     enabled: true
     extraZones: []
