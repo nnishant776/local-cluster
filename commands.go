@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 
 	"dario.cat/mergo"
+	"github.com/nnishant776/errstack"
 	errstk "github.com/nnishant776/errstack"
 	"github.com/nnishant776/local-cluster/config"
 	"github.com/nnishant776/local-cluster/internal/apps"
@@ -192,7 +194,7 @@ func installCmd() *cobra.Command {
 			}
 
 			// Copy cluster binary to correct path
-			binSubtree, err := fs.Sub(bundle, "assets")
+			binSubtree, err := fs.Sub(bundle, "bin")
 			if err != nil {
 				return errstk.New(err, errstk.WithStack())
 			}
@@ -260,17 +262,14 @@ func uninstallCmd() *cobra.Command {
 			}
 
 			if cmd.Flag("purge").Value.String() == "true" {
-				// Clear the existing data directory
-				fmt.Printf("Removing binary files from '%s'\n", dataDir)
-				if rmErr := os.RemoveAll(dataDir); rmErr != nil {
-					return errstk.New(rmErr, errstk.WithStack())
+				// Check if the directory exists
+				if _, err := os.Stat(dataDir); err != nil {
+					slog.Error("Installation data directory not found", "error", err)
+					return errstack.New(err, errstack.WithStack())
 				}
 
-				// Clear the binaries from the install dir
-				binSubtree, err := fs.Sub(bundle, "assets")
-				if err != nil {
-					return errstk.New(err, errstk.WithStack())
-				}
+				// Walk the directory tree rooted at the dataDir/bin
+				binSubtree := os.DirFS(filepath.Join(dataDir, "bin"))
 				fs.WalkDir(binSubtree, ".", func(path string, d fs.DirEntry, err error) error {
 					if err != nil {
 						return errstk.New(err, errstk.WithStack())
@@ -288,6 +287,12 @@ func uninstallCmd() *cobra.Command {
 
 					return nil
 				})
+
+				// Clear the existing data directory
+				fmt.Printf("Removing binary files from '%s'\n", dataDir)
+				if rmErr := os.RemoveAll(dataDir); rmErr != nil {
+					return errstk.New(rmErr, errstk.WithStack())
+				}
 			}
 
 			return nil

@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-//go:embed all:deployment all:assets
+//go:embed all:deployment all:bin
 var bundle embed.FS
 
 func init() {
