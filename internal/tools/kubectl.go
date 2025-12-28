@@ -2,9 +2,10 @@ package tools
 
 import (
 	"os"
+	"os/exec"
 
+	"github.com/nnishant776/errstack"
 	"github.com/spf13/cobra"
-	kctlcmd "k8s.io/kubectl/pkg/cmd"
 )
 
 func NewKubectlCommand() *cobra.Command {
@@ -13,9 +14,13 @@ func NewKubectlCommand() *cobra.Command {
 		Long:               "Run kubectl commands on the cluster",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			os.Args = append([]string{cmd.Name()}, args...)
-			c := kctlcmd.NewDefaultKubectlCommand()
-			return c.ExecuteContext(cmd.Context())
+			proc := exec.Command("k9s", args...)
+			proc.Stdout, proc.Stderr = os.Stdout, os.Stderr
+			if err := proc.Run(); err != nil {
+				return errstack.New(err, errstack.WithStack())
+			}
+
+			return nil
 		},
 	}
 }
