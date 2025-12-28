@@ -33,14 +33,23 @@ build: cmd:=$(runtime) run \
 	-e K8S_VERSION=$(k8s_version) \
 	golang:latest
 build:
+	rm -rf bin && mkdir -p bin && touch bin/.nofile
 ifeq ($(container),true)
 	$(eval build: cmd:=)
 endif
+	# Generate basic binary
+	env K8S_VERSION=$(k8s_version) $(cmd) sh -c \
+		"go build -v \
+		-ldflags \"-s -w -X 'github.com/nnishant776/local-cluster/config.k8sVersion=$(k8s_version)'\" \
+		-o bin/lcctl github.com/nnishant776/local-cluster"
+
+	# Generate packaged binary which includes the basic binary
 	env K8S_VERSION=$(k8s_version) $(cmd) sh -c \
 		"git config --global --add safe.directory $(projroot) && \
 		go generate . && \
+		cp -r assets/* bin/ && \
 		go build -v \
-		-ldflags \"-s -w -X 'github.com/nnishant776/local-cluster/config.k8sVersion=$(k8s_version)' -X 'k8s.io/component-base/version.gitVersion=$(k8s_version)' -X 'helm.sh/helm/v4/pkg/chart/v2/util.k8sVersionMinor=$(k8s_version_minor)'\" \
+		-ldflags \"-s -w -X 'github.com/nnishant776/local-cluster/config.k8sVersion=$(k8s_version)'\" \
 		-o bin/lcctl-$$(uname -s | tr '[:upper:]' '[:lower:]')-$$(uname -m) github.com/nnishant776/local-cluster"
 
 
