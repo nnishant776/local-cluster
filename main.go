@@ -7,8 +7,6 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/nnishant776/local-cluster/internal/tools"
-
 	errstk "github.com/nnishant776/errstack"
 
 	"golang.org/x/sys/unix"
@@ -35,17 +33,6 @@ func main() {
 	defer cancelFn()
 
 	cmd := newCLICmds()
-	switch os.Getenv("TOOL_MODE") {
-	case "helm":
-		cmd = tools.NewHelmCommand()
-	case "helmfile":
-		cmd = tools.NewHelmfileCommand()
-	case "k9s":
-		cmd = tools.NewK9SCommand()
-	case "kubectl":
-		cmd = tools.NewKubectlCommand()
-	}
-
 	err := cmd.ExecuteContext(ctx)
 	if flg := cmd.Flag("verbose"); err != nil && flg != nil && flg.Value.String() == "true" {
 		fmt.Printf("Failed to execute command: %#4v\n", err)
