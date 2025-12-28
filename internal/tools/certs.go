@@ -15,10 +15,10 @@ import (
 	"time"
 
 	"dario.cat/mergo"
-	"github.com/helmfile/helmfile/pkg/yaml"
 	"github.com/nnishant776/errstack"
 	"github.com/nnishant776/local-cluster/internal/utils"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 func newGenerateCommand() *cobra.Command {

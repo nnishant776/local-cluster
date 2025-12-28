@@ -2,8 +2,9 @@ package tools
 
 import (
 	"os"
+	"os/exec"
 
-	"github.com/derailed/k9s/cmd"
+	"github.com/nnishant776/errstack"
 	"github.com/spf13/cobra"
 )
 
@@ -13,8 +14,12 @@ func NewK9SCommand() *cobra.Command {
 		Long:               "Run k9s",
 		DisableFlagParsing: true,
 		RunE: func(c *cobra.Command, args []string) error {
-			os.Args = append([]string{c.Name()}, args...)
-			cmd.Execute()
+			proc := exec.Command("k9s", args...)
+			proc.Stdout, proc.Stderr = os.Stdout, os.Stderr
+			if err := proc.Run(); err != nil {
+				return errstack.New(err, errstack.WithStack())
+			}
+
 			return nil
 		},
 	}

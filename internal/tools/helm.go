@@ -2,11 +2,10 @@ package tools
 
 import (
 	"os"
+	"os/exec"
 
+	"github.com/nnishant776/errstack"
 	"github.com/spf13/cobra"
-	helmcmd "helm.sh/helm/v4/pkg/cmd"
-
-	_ "k8s.io/client-go/plugin/pkg/client/auth"
 )
 
 func NewHelmCommand() *cobra.Command {
@@ -15,15 +14,13 @@ func NewHelmCommand() *cobra.Command {
 		Long:               "Run helm commands on the cluster",
 		DisableFlagParsing: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			c, err := helmcmd.NewRootCmd(os.Stdout, args, helmcmd.SetupLogging)
-			if err != nil {
-				return err
+			proc := exec.Command("helm", args...)
+			proc.Stdout, proc.Stderr = os.Stdout, os.Stderr
+			if err := proc.Run(); err != nil {
+				return errstack.New(err, errstack.WithStack())
 			}
-			if v := cmd.Flag("verbose"); v != nil && v.Value.String() == "true" {
-				args = append(args, "--debug")
-			}
-			c.SetArgs(args)
-			return c.ExecuteContext(cmd.Context())
+
+			return nil
 		},
 	}
 }
