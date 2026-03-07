@@ -25,7 +25,7 @@ func init() {
 
 //go:generate go run ./prebuild.go download --component helm --report-progress=true --path assets
 //go:generate go run ./prebuild.go download --component k3s --report-progress=true --path assets --tag v1.34.0
-//go:generate go run ./prebuild.go download --component k9s --report-progress=true --path assets
+//go:generate go run ./prebuild.go download --component k9s --report-progress=true --path assets --tag v0.50.4
 //go:generate go run ./prebuild.go download --component kubectl --report-progress=true --path assets
 //go:generate go run ./prebuild.go download --component helmfile --report-progress=true --path assets --tag v1.1.3
 func main() {
