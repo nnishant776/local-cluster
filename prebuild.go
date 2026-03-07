@@ -450,7 +450,7 @@ func newK9SDownloadCmd() *cobra.Command {
 func newHelmDownloadCmd() *cobra.Command {
 	const (
 		helmGitAccount = "helm.sh"
-		helmGitRepo    = "helm/v3/cmd/helm"
+		helmGitRepo    = "helm/v4/cmd/helm"
 	)
 
 	cmd := &cobra.Command{

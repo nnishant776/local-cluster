@@ -1,9 +1,9 @@
 export projroot:=$(shell realpath .)
 export cluster_name:=docker-k3s
 export cluster_hostname:=local.cluster.dev
-export k8s_version:=v1.33.2
+export k8s_version:=v1.35.2
 export k8s_version_major:=1
-export k8s_version_minor:=33
+export k8s_version_minor:=35
 export k8s_version_patch:=2
 
 .env:
@@ -33,7 +33,7 @@ build: cmd:=$(runtime) run \
 	-e K8S_VERSION=$(k8s_version) \
 	golang:latest
 build:
-	rm -rf bin && mkdir -p bin && touch bin/.nofile
+	rm -rf bin && mkdir -p bin
 ifeq ($(container),true)
 	$(eval build: cmd:=)
 endif
