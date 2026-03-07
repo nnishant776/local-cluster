@@ -78,6 +78,8 @@ func newRootCmd() *cobra.Command {
 				downloadList = append(downloadList, newHelmDownloadCmd())
 			case "helmfile":
 				downloadList = append(downloadList, newHelmfileDownloadCmd())
+			case "kustomize":
+				downloadList = append(downloadList, newKustomizeDownloadCmd())
 			}
 
 			for _, c := range downloadList {
@@ -447,6 +449,44 @@ func newK9SDownloadCmd() *cobra.Command {
 	return cmd
 }
 
+func newKustomizeDownloadCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:              "download",
+		Short:            "download kustomize binary from GitHub release",
+		Long:             "download kustomize binary from GitHub release",
+		TraverseChildren: true,
+		CompletionOptions: cobra.CompletionOptions{
+			DisableDefaultCmd:   true,
+			DisableNoDescFlag:   false,
+			DisableDescriptions: false,
+			HiddenDefaultCmd:    false,
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Get kustomize version
+			tag := cmd.Flag("tag").Value.String()
+			path := cmd.Flag("path").Value.String()
+			path, err := filepath.Abs(path)
+			if err != nil {
+				slog.Error("Failed to get absolute path", "input", path)
+				return err
+			}
+			modName := fmt.Sprintf("sigs.k8s.io/kustomize/kustomize/v5@%s", tag)
+			proc := exec.Command("go", "install", "-ldflags", "-s -w", modName)
+			proc.Env = append(os.Environ(), "GOBIN="+path)
+			proc.Stdout, proc.Stderr = os.Stdout, os.Stderr
+			err = proc.Run()
+			if err != nil {
+				slog.Error("Failed to download kustomize", "error", err)
+				return err
+			}
+
+			return nil
+		},
+	}
+
+	return cmd
+}
+
 func newHelmDownloadCmd() *cobra.Command {
 	const (
 		helmGitAccount = "helm.sh"
@@ -465,7 +505,7 @@ func newHelmDownloadCmd() *cobra.Command {
 			HiddenDefaultCmd:    false,
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Get k9s version
+			// Get helm version
 			tag := cmd.Flag("tag").Value.String()
 			path := cmd.Flag("path").Value.String()
 			path, err := filepath.Abs(path)
@@ -509,7 +549,7 @@ func newHelmfileDownloadCmd() *cobra.Command {
 			HiddenDefaultCmd:    false,
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Get k9s version
+			// Get helmfile version
 			tag := cmd.Flag("tag").Value.String()
 			path := cmd.Flag("path").Value.String()
 			path, err := filepath.Abs(path)

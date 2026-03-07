@@ -27,6 +27,7 @@ func init() {
 //go:generate go run ./prebuild.go download --component k3s --report-progress=true --path assets --tag v1.35.2
 //go:generate go run ./prebuild.go download --component k9s --report-progress=true --path assets --tag v0.50.18
 //go:generate go run ./prebuild.go download --component kubectl --report-progress=true --path assets
+//go:generate go run ./prebuild.go download --component kustomize --report-progress=true --path assets --tag v5.8.1
 //go:generate go run ./prebuild.go download --component helmfile --report-progress=true --path assets --tag v1.4.1
 func main() {
 	ctx, cancelFn := signal.NotifyContext(context.Background(), []os.Signal{unix.SIGTERM, unix.SIGINT}...)
