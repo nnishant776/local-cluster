@@ -1,0 +1,13 @@
+{{- if .Values.persistentVolumeClaim }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qbittorrent.fullname" . }}-data
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "qbittorrent.selectorLabels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistentVolumeClaim.storageClassName }}
+  volumeMode: {{ .Values.persistentVolumeClaim.volumeMode }}
+  accessModes: {{ .Values.persistentVolumeClaim.accessModes }}
+  resources: {{ .Values.persistentVolumeClaim.resources | toYaml | nindent 4 }}
+{{- end }}

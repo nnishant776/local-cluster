@@ -169,6 +169,22 @@ releases:
     values:
       - apps/docker-registry/values.yaml.gotmpl
       - {{- .Values | get "apps.docker-registry" | toYaml | nindent 8 }}
+    strategicMergePatches:
+      - apps/docker-registry/patches/strategic/ndots.yaml.gotmpl
+
+  - name: qbittorrent
+    labels:
+      group: applications
+    namespace: {{ .Values | get "apps.qbittorrent.namespace" }}
+    installed: {{ .Values | get "apps.qbittorrent.enabled" }}
+    chart: apps/qbittorrent
+    inherit:
+      - template: default
+    values:
+      - apps/qbittorrent/values.yaml.gotmpl
+      - {{- .Values | get "apps.qbittorrent" | toYaml | nindent 8 }}
+    strategicMergePatches:
+      - apps/qbittorrent/patches/strategic/ndots.yaml.gotmpl
 
   - name: cluster-resources
     labels:

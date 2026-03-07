@@ -1,0 +1,62 @@
+rootDomain: {{ .Values.infra.rootDomain }}
+replicaCount: 1
+image:
+  repository: "docker.io/nnish947boe/qbittorrent"
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+podLabels: {}
+
+podSecurityContext: {}
+
+autoscaling:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: {{ get "apps.ingress-controller.type" .Values }}
+  annotations:
+    kubernetes.io/ingress.class: {{ get "apps.ingress-controller.type" .Values }}
+    cert-manager.io/cluster-issuer: {{ get "global.tls.ca.issuerName" .Values }}
+    {{- if eq (get "apps.ingress-controller.type" .Values) "traefik" }}
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    {{- else }}
+    {{- end }}
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+persistentVolumeClaim:
+  storageClassName: external-storage
+  volumeMode: Filesystem
+  accessModes: [ReadWriteMany]
+  resources:
+    requests:
+      storage: 250Gi
+
+nodeSelector:
+  node-role.kubernetes.io/control-plane: "true"
+
+tolerations: []
+
+affinity: {}
